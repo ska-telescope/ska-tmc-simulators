@@ -17,16 +17,14 @@ setup_dir = os.path.dirname(os.path.abspath(__file__))
 # make sure we use latest info from local code
 sys.path.insert(0, setup_dir)
 
-readme_filename = os.path.join(setup_dir, "README.rst")
-with open(readme_filename) as file:
-    long_description = file.read()
+# readme_filename = os.path.join(setup_dir, "README.rst")
+# with open(readme_filename) as file:
+#     long_description = file.read()
 
 setup(
     name= "simulators",
     version= "0.0.0",
     description="",
-    packages=find_packages(where="src"),
-    package_dir={"": "src"},
     package_data={
         "cspsubarraysimulator": [
             "csp_subarray_SimDD.json",
@@ -57,7 +55,6 @@ setup(
     author="Team NCRA",
     author_email="telmgt-internal@googlegroups.com",
     license="BSD-3-Clause",
-    long_description=long_description,
     url="https://www.skaobservatory.org",
     platforms="Linux",
     install_requires=["pytango==9.3.3"],

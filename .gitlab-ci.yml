@@ -30,7 +30,6 @@ build ska-tmc-simulators wheel for publication: # Executed on a tag
   tags:
     - k8srunner
   script:
-    - cd ./ska-tmc-simulators
     - python3 setup.py egg_info sdist bdist_wheel
     - /usr/local/bin/extract-metadata.sh MANIFEST.skao.int
     - for filename in ./dist/*.whl ./dist/*.tar.gz; do
@@ -40,7 +39,7 @@ build ska-tmc-simulators wheel for publication: # Executed on a tag
     - tags
   artifacts:
     paths:
-      - ./ska-tmc-simulators/dist/
+      - ./dist/
 
 build ska-tmc-simulators wheel for development: # Executed on a commit
   stage: build
@@ -48,7 +47,6 @@ build ska-tmc-simulators wheel for development: # Executed on a commit
   tags:
     - k8srunner
   script:
-    - cd ./ska-tmc-simulators
     - python3 setup.py egg_info sdist bdist_wheel
     - /usr/local/bin/extract-metadata.sh MANIFEST.skao.int
     - for filename in ./dist/*.whl ./dist/*.tar.gz; do
@@ -58,7 +56,7 @@ build ska-tmc-simulators wheel for development: # Executed on a commit
     - tags
   artifacts:
     paths:
-      - ./ska-tmc-simulators/dist/
+      - ./dist/
 
 build-image:
   stage: build
