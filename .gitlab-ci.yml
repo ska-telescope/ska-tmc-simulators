@@ -11,6 +11,8 @@ variables:
 cache:
   paths:
     - build
+    - pages
+    - release
 
 #before_script:
 #  - python3 -m pip install -r requirements-dev.txt
@@ -106,56 +108,34 @@ build-image:
 #    variables:
 #      - $CI_COMMIT_MESSAGE =~ /^.+$/ # Confirm tag message exists
 #      - $CI_COMMIT_TAG =~ /^((([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)$/ # Confirm semantic versioning of tag
-#
-#pages:
-#  stage: pages
-#  tags:
-#    - docker-executor
-#  only:
-#    - master
-#  script:
-#    - mv build public
-#    - mv public/reports/ska-tmc-cspmasterleafnode-mid_htmlcov/* public
-#    - mv public/reports/ska-tmc-cspsubarrayleafnode-mid_htmlcov/* public
-#    - mv public/reports/ska-tmc-sdpsubarrayleafnode-mid_htmlcov/* public
-#    - mv public/reports/ska-tmc-mccssubarrayleafnode-low_htmlcov/* public
-#    - mv public/reports/ska-tmc-mccsmasterleafnode-low_htmlcov/* public
-#    - mv public/reports/ska-tmc-sdpmasterleafnode-mid_htmlcov/* public
-#    - mv public/reports/ska-tmc-dishleafnode-mid_htmlcov/* public
-#    - mv public/reports/ska-tmc-subarraynode-low_htmlcov/* public
-#    - mv public/reports/ska-tmc-centralnode-low_htmlcov/* public
-#  artifacts:
-#    paths:
-#      - public
-#
-#release tmc:
-#  stage: release
-#  image: $SKA_K8S_TOOLS_DOCKER_BUILDER_IMAGE
-#  before_script:
-#  - docker login -u $CAR_OCI_REGISTRY_USERNAME -p $CAR_OCI_REGISTRY_PASSWORD $CAR_OCI_REGISTRY_HOST
-#  tags:
-#    - docker-executor
-#  script:
-#    - make release-ska-tmc USERNAME=$GITLAB_USER_NAME EMAILID=$GITLAB_USER_EMAIL # Publish tag on the gitlab and tagged image on Nexus
-#  when: manual
-#
-#release ska-alarm-handler:
-#  stage: release
-#  image: $SKA_K8S_TOOLS_DEPLOY_IMAGE
-#  before_script:
-#  - docker login -u $CAR_OCI_REGISTRY_USERNAME -p $CAR_OCI_REGISTRY_PASSWORD $CAR_OCI_REGISTRY_HOST
-#  tags:
-#    - docker-executor
-#  script:
-#    - cd ./ska-tmc/tmalarmhandler
-#    - docker build -t $CAR_OCI_REGISTRY_HOST/ska-alarm-handler:$ALARM_HANDLER_IMG_VER .
-#    - docker push $CAR_OCI_REGISTRY_HOST/ska-alarm-handler:$ALARM_HANDLER_IMG_VER
-#  when: manual
-#
+
+pages:
+  stage: pages
+  tags:
+    - docker-executor
+  only:
+    - master
+  script:
+    - mv build public
+    - mv public/reports/ska-tmc-simulators_htmlcov/* public
+  artifacts:
+    paths:
+      - public
+
+release simulators:
+  stage: release
+  image: $SKA_K8S_TOOLS_DOCKER_BUILDER_IMAGE
+  before_script:
+  - docker login -u $CAR_OCI_REGISTRY_USERNAME -p $CAR_OCI_REGISTRY_PASSWORD $CAR_OCI_REGISTRY_HOST
+  tags:
+    - docker-executor
+  script:
+    - make release-simulators USERNAME=$GITLAB_USER_NAME EMAILID=$GITLAB_USER_EMAIL # Publish tag on the gitlab and tagged image on Nexus
+  when: manual
+
 ## Standardised included jobs
 #variables:
 #  CHARTS_TO_PUBLISH: ska-tmc-low ska-tmc-mid
-#  ALARM_HANDLER_IMG_VER: "0.1.7"  # Update alarm handler image version before publishing an image
 #include:
 ## Helm Chart Publish
 ## https://developer.skatelescope.org/en/latest/development/software_package_release_procedure.html#package-and-publish-helm-charts-to-the-ska-helm-chart-repository
