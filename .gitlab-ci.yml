@@ -11,8 +11,6 @@ variables:
 cache:
   paths:
     - build
-    - pages
-    - release
 
 #before_script:
 #  - python3 -m pip install -r requirements-dev.txt
@@ -25,6 +23,8 @@ cache:
 
 stages:
   - build
+  - pages
+  - release
 
 build ska-tmc-simulators wheel for publication: # Executed on a tag
   stage: build
