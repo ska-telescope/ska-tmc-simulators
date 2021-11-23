@@ -7,7 +7,7 @@ USER root
 
 # install all local TMC packages
 RUN python3 -m pip install -r requirements.txt \
-    /app/ska-tmc-simulators
+    /app
 
 USER tango
 
