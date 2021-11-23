@@ -20,6 +20,6 @@ PROJECT = ska-tmc-simulators
 #
 include .make/Makefile.mk
 include .make/docker.mk
-# include .make/test.mk
+include .make/test.mk
 
 .PHONY: all test lint help
