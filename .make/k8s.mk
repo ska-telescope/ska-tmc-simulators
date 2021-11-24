@@ -6,14 +6,14 @@ TANGO_HOST ?= $(TANGO_DATABASE_DS):10000## TANGO_HOST is an input!
 STANDALONE_MODE ?= false
 
 CHARTS ?= ska-tmc-simulators ## list of charts to be published on gitlab -- umbrella charts for testing purpose
-KUBE_NAMESPACE ?= tmcmidsimulators
+# KUBE_NAMESPACE ?= tmcmidsimulators
 CUSTOM_SUBARRAY_COUNT ?= 1
 CUSTOM_DISHES_LIST ?= {01}
 CHART_DEBUG ?= # --debug
-HELM_RELEASE ?= test
+#HELM_RELEASE ?= test
 
-CI_PROJECT_PATH_SLUG ?= ska-tmc-simulators
-CI_ENVIRONMENT_SLUG ?= ska-tmc-simulators
+# CI_PROJECT_PATH_SLUG ?= ska-tmc-simulators
+# CI_ENVIRONMENT_SLUG ?= ska-tmc-simulators
 
 .DEFAULT_GOAL := help
 
