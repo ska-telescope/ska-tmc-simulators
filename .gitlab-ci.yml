@@ -23,6 +23,7 @@ cache:
 
 stages:
   - build
+  - linting
   - pages
   - release
 
@@ -75,17 +76,17 @@ build-image:
       - current_tag.txt
 
 
-#linting:
-#  stage: linting
-#  image: artefact.skao.int/ska-tango-images-pytango-builder:9.3.10
-#  tags:
-#    - docker-executor
-#  script:
-#    - make lint
-#  allow_failure: true
-#  artifacts:
-#    paths:
-#      - ./build
+linting:
+  stage: linting
+  image: artefact.skao.int/ska-tango-images-pytango-builder:9.3.10
+  tags:
+    - docker-executor
+  script:
+    - make lint
+  allow_failure: true
+  artifacts:
+    paths:
+      - ./build
 
 #publish to nexus:
 #  stage: publish
