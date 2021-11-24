@@ -12,7 +12,7 @@
 CAR_OCI_REGISTRY_HOST ?= artefact.skao.int
 CAR_OCI_REGISTRY_USER ?= ska-telescope
 PROJECT = ska-tmc-simulators
-
+CHART_PATH ?= charts/ska-tmc-simulators/
 #
 # include makefile to pick up the standard Make targets, e.g., 'make build'
 # build, 'make push' docker push procedure, etc. The other Make targets
@@ -21,5 +21,5 @@ PROJECT = ska-tmc-simulators
 include .make/Makefile.mk
 include .make/docker.mk
 include .make/test.mk
-
+include .make/k8s.mk
 .PHONY: all test lint help

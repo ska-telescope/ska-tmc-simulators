@@ -1,6 +1,6 @@
 apiVersion: v2
-name: ska-tmc-mid-simulators
-description: A subchart for SKA-TMC-Mid-Simulators  deployment.
+name: ska-tmc-simulators
+description: A subchart for SKA-TMC-Simulators  deployment.
 type: application
 version: 0.0.1
 appVersion: 1.16.0

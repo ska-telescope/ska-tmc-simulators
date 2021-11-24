@@ -1,0 +1,9 @@
+dependencies:
+- name: ska-tango-base
+  repository: https://artefact.skao.int/repository/helm-internal
+  version: 0.2.24
+- name: ska-tango-util
+  repository: https://artefact.skao.int/repository/helm-internal
+  version: 0.2.14
+digest: sha256:19a2a840a0e31c49ddfcbbfb4588650d262c2af5ec22bcaf60b274f7c5293b58
+generated: "2021-11-24T06:57:10.142530093Z"

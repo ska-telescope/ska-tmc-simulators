@@ -5,15 +5,15 @@ TANGO_DATABASE_DS ?= tango-host-databaseds-from-makefile-$(RELEASE_NAME) ## Stab
 TANGO_HOST ?= $(TANGO_DATABASE_DS):10000## TANGO_HOST is an input!
 STANDALONE_MODE ?= false
 
-CHARTS ?= ska-tmc-mid ska-tmc-low ska-tmc-mid-simulators ska-tmc-mid-umbrella ska-tmc-low-umbrella ## list of charts to be published on gitlab -- umbrella charts for testing purpose
-
-CHART_PATH ?= charts/ska-tmc-mid-simulators/
+CHARTS ?= ska-tmc-simulators ## list of charts to be published on gitlab -- umbrella charts for testing purpose
+KUBE_NAMESPACE ?= tmcmidsimulators
 CUSTOM_SUBARRAY_COUNT ?= 1
 CUSTOM_DISHES_LIST ?= {01}
 CHART_DEBUG ?= # --debug
+HELM_RELEASE ?= test
 
-CI_PROJECT_PATH_SLUG ?= ska-tmc
-CI_ENVIRONMENT_SLUG ?= ska-tmc
+CI_PROJECT_PATH_SLUG ?= ska-tmc-simulators
+CI_ENVIRONMENT_SLUG ?= ska-tmc-simulators
 
 .DEFAULT_GOAL := help
 
@@ -92,7 +92,7 @@ install-chart: dep-up namespace  ## install the helm chart with name HELM_RELEAS
 # install-custom-chart:
 # 	@echo global.dishes=$(CUSTOM_DISHES_LIST)
 install-custom-chart: dep-up namespace namespace_sdp ## Specify the number of subarrays and dishes as paramaters. E.g NUM_SUBARRAYS=3 DISHES={1,2,7} make install-custom-chart
-	@sed -e 's/CI_PROJECT_PATH_SLUG/$(CI_PROJECT_PATH_SLUG)/' $(UMBRELLA_CHART_PATH)values.yaml > generated_values.yaml; \
+	@sed -e 's/CI_PROJECT_PATH_SLUG/$(CI_PROJECT_PATH_SLUG)/' $(CHART_PATH)values.yaml > generated_values.yaml; \
 	sed -e 's/CI_ENVIRONMENT_SLUG/$(CI_ENVIRONMENT_SLUG)/' generated_values.yaml > values.yaml; \
 	helm install $(HELM_RELEASE) \
 	--set minikube=$(MINIKUBE) \
@@ -103,7 +103,7 @@ install-custom-chart: dep-up namespace namespace_sdp ## Specify the number of su
 	--set tangoDatabaseDS=$(TANGO_DATABASE_DS) \
 	--set sdp.helmdeploy.namespace=$(SDP_KUBE_NAMESPACE) \
 	--values values.yaml $(CUSTOM_VALUES) \
-	 $(UMBRELLA_CHART_PATH) --namespace $(KUBE_NAMESPACE) $(CHART_DEBUG); \
+	 $(CHART_PATH) --namespace $(KUBE_NAMESPACE) $(CHART_DEBUG); \
 	 rm generated_values.yaml; \
 	 rm values.yaml
 
@@ -111,7 +111,7 @@ install-custom-chart: dep-up namespace namespace_sdp ## Specify the number of su
 
 
 template-chart: clean dep-up## install the helm chart with name RELEASE_NAME and path UMBRELLA_CHART_PATH on the namespace KUBE_NAMESPACE
-	@sed -e 's/CI_PROJECT_PATH_SLUG/$(CI_PROJECT_PATH_SLUG)/' $(UMBRELLA_CHART_PATH)values.yaml > generated_values.yaml; \
+	@sed -e 's/CI_PROJECT_PATH_SLUG/$(CI_PROJECT_PATH_SLUG)/' $(CHART_PATH)values.yaml > generated_values.yaml; \
 	sed -e 's/CI_ENVIRONMENT_SLUG/$(CI_ENVIRONMENT_SLUG)/' generated_values.yaml > values.yaml; \
 	helm template $(RELEASE_NAME) \
 	--set minikube=$(MINIKUBE) \
@@ -121,7 +121,7 @@ template-chart: clean dep-up## install the helm chart with name RELEASE_NAME and
 	--set sdp.helmdeploy.namespace=$(SDP_KUBE_NAMESPACE) \
 	--values values.yaml $(CUSTOM_VALUES) \
 	--debug \
-	 $(UMBRELLA_CHART_PATH) --namespace $(KUBE_NAMESPACE); \
+	 $(CHART_PATH) --namespace $(KUBE_NAMESPACE); \
 	 rm generated_values.yaml; \
 	 rm values.yaml
 
@@ -133,14 +133,14 @@ uninstall-chart: ## uninstall the ska-tmc-mid helm chart on the namespace ska-tm
 reinstall-chart: uninstall-chart install-chart ## reinstall the ska-tmc-mid helm chart on the namespace ska-tmc
 
 upgrade-chart: ## upgrade the ska-tmc-mid helm chart on the namespace ska-tmc
-	helm upgrade --set minikube=$(MINIKUBE) $(HELM_RELEASE) $(UMBRELLA_CHART_PATH) --namespace $(KUBE_NAMESPACE) 
+	helm upgrade --set minikube=$(MINIKUBE) $(HELM_RELEASE) $(CHART_PATH) --namespace $(KUBE_NAMESPACE) 
 
 wait:## wait for pods to be ready
 	@echo "Waiting for pods to be ready"
 	@date
 	@kubectl -n $(KUBE_NAMESPACE) get pods
 	@jobs=$$(kubectl get job --output=jsonpath={.items..metadata.name} -n $(KUBE_NAMESPACE)); kubectl wait job --for=condition=complete --timeout=360s $$jobs -n $(KUBE_NAMESPACE)
-	@kubectl -n $(KUBE_NAMESPACE) wait --for=condition=ready -l app=ska-tmc --timeout=360s pods
+	@kubectl -n $(KUBE_NAMESPACE) wait --for=condition=ready -l app=ska-tmc-simulators --timeout=360s pods
 	@kubectl get pods -n $(KUBE_NAMESPACE)
 	@date
 
@@ -153,7 +153,7 @@ show: ## show the helm chart
 
 # Linting chart ska-tmc-mid
 chart_lint: ## lint check the helm chart
-	@helm lint $(UMBRELLA_CHART_PATH) \
+	@helm lint $(CHART_PATH) \
 		--namespace $(KUBE_NAMESPACE)
 
 describe: ## describe Pods executed from Helm chart
@@ -315,13 +315,5 @@ dump_dashboards: # @param: name of the dashborad
 load_dashboards: # @param: name of the dashborad
 	kubectl exec -i pod/mongodb-webjive-test-0 -n $(KUBE_NAMESPACE) -- mongorestore --archive < $(DASHBOARD)
 
-# How to test unit-test cases
-unit-test:
-	cd ska-tmc; \
-	chmod 755 run_tox.sh; \
-	./run_tox.sh;
 # How to run lint job
-lint:
-	cd ska-tmc; \
-	chmod 755 run_lint.sh; \
-	./run_lint.sh;
+# F

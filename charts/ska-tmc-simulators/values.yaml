@@ -3,12 +3,12 @@ xauthority: "~/.Xauthority"
 
 enabled: true
 
-system: TM-mid-simulator
+system: TM-simulators
 telescope: SKA-mid-simulator
-subsystem: ska-tmc-mid-simulator
+subsystem: ska-tmc-simulator
 
 labels:
-  app: ska-tmc
+  app: ska-tmc-simulators
 annotations:
   app.gitlab.com/app: CI_PROJECT_PATH_SLUG
   app.gitlab.com/env: CI_ENVIRONMENT_SLUG
