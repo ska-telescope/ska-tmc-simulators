@@ -42,11 +42,11 @@ server:
                         - "-1"
                         - "1"
   {{- end }}
-# depends_on: 
-#   - device: sys/database/2
+depends_on: 
+  - device: sys/database/2
 image:
-  registry: "{{.Values.global.skatmc.registry}}"
-  image: "{{.Values.global.skatmc.image}}"
-  tag: "{{.Values.global.skatmc.tag}}"
-  pullPolicy: "{{.Values.global.skatmc.pullPolicy}}"
+  registry: "{{.Values.global.tmcsim.registry}}"
+  image: "{{.Values.global.tmcsim.image}}"
+  tag: "{{.Values.global.tmcsim.tag}}"
+  pullPolicy: "{{.Values.global.tmcsim.pullPolicy}}"
     

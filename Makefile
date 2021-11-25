@@ -29,7 +29,7 @@ HELM_CHART ?= ska-tmc-simulators
 
 # UMBRELLA_CHART_PATH Path of the umbrella chart to work with
 CHART_PATH ?= charts/ska-tmc-simulators/
-
+UMBRELLA_CHART_PATH ?= charts/ska-tmc-simulators-umbrella/
 # Fixed variables
 # Timeout for gitlab-runner when run locally
 TIMEOUT = 86400
@@ -62,9 +62,9 @@ CUSTOM_VALUES =
 
 ifneq ($(CI_JOB_ID),)
 CI_PROJECT_IMAGE := 
-CUSTOM_VALUES = --set global.skatmc.registry=registry.gitlab.com/ska-telescope \
-	--set global.skatmc.image=ska-tmc-simulators \
-	--set global.skatmc.tag=$(CI_COMMIT_SHORT_SHA)
+# CUSTOM_VALUES = --set global.skatmc.registry=registry.gitlab.com/ska-telescope \
+# 	--set global.skatmc.image=ska-tmc-simulators \
+# 	--set global.skatmc.tag=$(CI_COMMIT_SHORT_SHA)
 
 
 else
