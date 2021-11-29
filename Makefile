@@ -17,7 +17,6 @@ PROJECT = ska-tmc-simulators
 # KUBE_NAMESPACE defines the Kubernetes Namespace that will be deployed to
 # using Helm.  If this does not already exist it will be created
 KUBE_NAMESPACE ?= tmcmidsimulators
-SDP_KUBE_NAMESPACE ?= $(KUBE_NAMESPACE)-sdp#namespace to be used
 DASHBOARD ?= webjive-dash.dump
 
 # HELM_RELEASE is the release that all Kubernetes resources will be labelled
@@ -25,7 +24,7 @@ DASHBOARD ?= webjive-dash.dump
 HELM_RELEASE ?= test
 
 # HELM_CHART the chart name
-HELM_CHART ?= ska-tmc-simulators
+HELM_CHART ?= ska-tmc-simulators-umbrella
 
 # UMBRELLA_CHART_PATH Path of the umbrella chart to work with
 CHART_PATH ?= charts/ska-tmc-simulators/

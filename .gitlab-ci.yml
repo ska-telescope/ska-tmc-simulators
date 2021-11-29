@@ -102,7 +102,7 @@ deploy-simulators:
   script:
     - kubectl version
     - make install-chart MINIKUBE=false
-    - curl -s https://gitlab.com/ska-telescope/templates-repository/-/raw/master/scripts/namespace_auth.sh | bash -s "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG" "ci-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-mid" "ci-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-mid-sdp" || true
+    - curl -s https://gitlab.com/ska-telescope/templates-repository/-/raw/master/scripts/namespace_auth.sh | bash -s "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG" "ci-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-mid" || true
     - make wait
     - kubectl get namespace
     - make uninstall-chart

@@ -13,8 +13,8 @@ CUSTOM_DISHES_LIST ?= {01}
 CHART_DEBUG ?= # --debug
 HELM_RELEASE ?= test
 
-# CI_PROJECT_PATH_SLUG ?= ska-tmc-simulators
-# CI_ENVIRONMENT_SLUG ?= ska-tmc-simulators
+CI_PROJECT_PATH_SLUG ?= ska-tmc-simulators
+CI_ENVIRONMENT_SLUG ?= ska-tmc-simulators
 
 .DEFAULT_GOAL := help
 
@@ -77,9 +77,6 @@ install-chart: dep-up namespace  ## install the helm chart with name HELM_RELEAS
 	sed -e 's/CI_ENVIRONMENT_SLUG/$(CI_ENVIRONMENT_SLUG)/' generated_values.yaml > values.yaml; \
 	helm install $(HELM_RELEASE) \
 	--set minikube=$(MINIKUBE) \
-	--set global.minikube=$(MINIKUBE) \
-	--set global.tango_host=$(TANGO_HOST) \
-	--set tangoDatabaseDS=$(TANGO_DATABASE_DS) \
 	 $(UMBRELLA_CHART_PATH) --namespace $(KUBE_NAMESPACE); \
 	 rm generated_values.yaml; \
 	 rm values.yaml
