@@ -23,6 +23,7 @@ cache:
 
 stages:
   - build
+  - deploy
   - linting
   - pages
   - release
@@ -87,6 +88,32 @@ linting:
   artifacts:
     paths:
       - ./build
+
+deploy-simulators:
+  stage: deploy
+  dependencies:
+    - build-image
+  tags:
+    - k8srunner
+  image: $SKA_K8S_TOOLS_DEPLOY_IMAGE
+  before_script:
+    - kubectl get namespace
+    - make clean
+  script:
+    - kubectl version
+    - make install-chart MINIKUBE=false
+    - curl -s https://gitlab.com/ska-telescope/templates-repository/-/raw/master/scripts/namespace_auth.sh | bash -s "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG" "ci-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-mid" "ci-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-mid-sdp" || true
+    - make wait
+    - kubectl get namespace
+    - make uninstall-chart
+    - make clean
+    - make delete_namespace
+  environment:
+    name: test/$CI_COMMIT_REF_SLUG
+    kubernetes:
+      # This repetition is needed for gitlab to parse the namespace correctly
+      namespace: ci-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-mid
+
 
 #publish to nexus:
 #  stage: publish
