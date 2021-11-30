@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 # Standard python import
-import sys
-import os
 # Additional import
 from .utils import get_tango_server_class
-import tango
 from tango.server import run
 
 # File generated on Mon Jul 12 13:24:36 2021 by tango-simlib-generator

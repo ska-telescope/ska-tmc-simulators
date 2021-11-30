@@ -3,15 +3,12 @@
 override class with command handlers for CspMaster.
 """
 # Standard python imports
-import pkg_resources
 import enum
-import logging
 
 # Tango import
-from tango import DevState, Except, ErrSeverity, Database, DeviceProxy
+from tango import DevState, Except, ErrSeverity, DeviceProxy
 
 # SKA imports
-from ska_ser_logging import configure_logging
 from ska.base.commands import ResultCode
 
 

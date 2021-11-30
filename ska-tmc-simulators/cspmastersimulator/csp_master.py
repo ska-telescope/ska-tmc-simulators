@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 # Standard python import
-import sys
-import os
 # Additional import
 from .utils import get_tango_server_class
 import tango

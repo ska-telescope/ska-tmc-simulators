@@ -8,17 +8,11 @@
 # See LICENSE.txt for more info.
 
 # Standard Python imports
-import pkg_resources
-import enum
-# import enum
-import logging
-
 # Tango imports
-from tango import DevState, Except, ErrSeverity, Database, Group
+from tango import DevState, Except, ErrSeverity
 
 # SKA imports
 from ska.base.commands import ResultCode
-from ska_ser_logging import configure_logging
 
 
 class OverrideSdpMaster:

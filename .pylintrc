@@ -44,7 +44,7 @@ load-plugins=
 # --disable=W"
 disable=C,R,attribute-defined-outside-init,invalid-name,no-member,no-self-use,
         fixme,broad-except,redefined-builtin,protected-access,arguments-differ,
-        signature-differs, raise-missing-from
+        signature-differs,raise-missing-from,import-error
 
 
 [REPORTS]

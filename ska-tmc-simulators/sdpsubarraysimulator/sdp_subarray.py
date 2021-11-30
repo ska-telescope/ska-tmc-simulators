@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # Standard python import
 import sys
-import os
 # Tango import
 #!/usr/bin/env python
 
