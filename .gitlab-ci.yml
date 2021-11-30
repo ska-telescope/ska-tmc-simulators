@@ -23,10 +23,12 @@ cache:
 
 stages:
   - build
+  - clean
   - deploy
   - linting
   - pages
   - release
+  - publish
 
 build ska-tmc-simulators wheel for publication: # Executed on a tag
   stage: build
@@ -104,7 +106,20 @@ deploy-simulators:
     - make install-chart MINIKUBE=false
     - curl -s https://gitlab.com/ska-telescope/templates-repository/-/raw/master/scripts/namespace_auth.sh | bash -s "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG" "ci-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-mid" || true
     - make wait
+  environment:
+    name: test/$CI_COMMIT_REF_SLUG
+    kubernetes:
+      # This repetition is needed for gitlab to parse the namespace correctly
+      namespace: ci-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-mid
+
+tmc-simulators_uninstall:
+  stage: clean
+  tags:
+    - k8srunner
+  image: $SKA_K8S_TOOLS_DEPLOY_IMAGE
+  before_script:
     - kubectl get namespace
+  script:
     - make uninstall-chart
     - make clean
     - make delete_namespace
@@ -113,29 +128,23 @@ deploy-simulators:
     kubernetes:
       # This repetition is needed for gitlab to parse the namespace correctly
       namespace: ci-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-mid
+    action: stop
+  when: manual
 
 
-#publish to nexus:
-#  stage: publish
-#  tags:
-#    - docker-executor
-#  script:
-#    - python3 -m pip install twine
-#    - twine upload --username ${CAR_PYPI_USERNAME} --password ${CAR_PYPI_PASSWORD} --repository-url $CAR_PYPI_REPOSITORY_URL ./ska-tmc/ska-tmc-dishleafnode-mid/dist/*
-#    - twine upload --username ${CAR_PYPI_USERNAME} --password ${CAR_PYPI_PASSWORD} --repository-url $CAR_PYPI_REPOSITORY_URL ./ska-tmc/ska-tmc-centralnode-low/dist/*
-#    - twine upload --username ${CAR_PYPI_USERNAME} --password ${CAR_PYPI_PASSWORD} --repository-url $CAR_PYPI_REPOSITORY_URL ./ska-tmc/ska-tmc-subarraynode-low/dist/*
-#    - twine upload --username ${CAR_PYPI_USERNAME} --password ${CAR_PYPI_PASSWORD} --repository-url $CAR_PYPI_REPOSITORY_URL ./ska-tmc/ska-tmc-cspmasterleafnode-mid/dist/*
-#    - twine upload --username ${CAR_PYPI_USERNAME} --password ${CAR_PYPI_PASSWORD} --repository-url $CAR_PYPI_REPOSITORY_URL ./ska-tmc/ska-tmc-sdpmasterleafnode-mid/dist/*
-#    - twine upload --username ${CAR_PYPI_USERNAME} --password ${CAR_PYPI_PASSWORD} --repository-url $CAR_PYPI_REPOSITORY_URL ./ska-tmc/ska-tmc-mccsmasterleafnode-low/dist/*
-#    - twine upload --username ${CAR_PYPI_USERNAME} --password ${CAR_PYPI_PASSWORD} --repository-url $CAR_PYPI_REPOSITORY_URL ./ska-tmc/ska-dish-master-mid/dist/*
-#    - twine upload --username ${CAR_PYPI_USERNAME} --password ${CAR_PYPI_PASSWORD} --repository-url $CAR_PYPI_REPOSITORY_URL ./ska-tmc/ska-tmc-sdpsubarrayleafnode-mid/dist/*
-#    - twine upload --username ${CAR_PYPI_USERNAME} --password ${CAR_PYPI_PASSWORD} --repository-url $CAR_PYPI_REPOSITORY_URL ./ska-tmc/ska-tmc-cspsubarrayleafnode-mid/dist/*
-#    - twine upload --username ${CAR_PYPI_USERNAME} --password ${CAR_PYPI_PASSWORD} --repository-url $CAR_PYPI_REPOSITORY_URL ./ska-tmc/ska-tmc-mccssubarrayleafnode-low/dist/*
-#  when: manual
-#  only:
-#    variables:
-#      - $CI_COMMIT_MESSAGE =~ /^.+$/ # Confirm tag message exists
-#      - $CI_COMMIT_TAG =~ /^((([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)$/ # Confirm semantic versioning of tag
+
+publish to nexus:
+  stage: publish
+  tags:
+    - docker-executor
+  script:
+    - python3 -m pip install twine
+    - twine upload --username ${CAR_PYPI_USERNAME} --password ${CAR_PYPI_PASSWORD} --repository-url $CAR_PYPI_REPOSITORY_URL ./ska-tmc/ska-tmc-simulators/dist/*
+  when: manual
+  only:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /^.+$/ # Confirm tag message exists
+      - $CI_COMMIT_TAG =~ /^((([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)$/ # Confirm semantic versioning of tag
 
 pages:
   stage: pages
@@ -161,16 +170,16 @@ release simulators:
     - make release-simulators USERNAME=$GITLAB_USER_NAME EMAILID=$GITLAB_USER_EMAIL # Publish tag on the gitlab and tagged image on Nexus
   when: manual
 
-## Standardised included jobs
-#variables:
-#  CHARTS_TO_PUBLISH: ska-tmc-low ska-tmc-mid
-#include:
-## Helm Chart Publish
-## https://developer.skatelescope.org/en/latest/development/software_package_release_procedure.html#package-and-publish-helm-charts-to-the-ska-helm-chart-repository
-#- project: 'ska-telescope/templates-repository'
-#  file: 'gitlab-ci/includes/helm_publish.yml'
-## Create Gitlab CI badges from CI metrics
-## https://developer.skatelescope.org/en/latest/tools/continuousintegration.html#automated-collection-of-ci-health-metrics-as-part-of-the-ci-pipeline
-#- project: 'ska-telescope/templates-repository'
-#  file: 'gitlab-ci/includes/post_step.yml'
-#
+# Standardised included jobs
+variables:
+  CHARTS_TO_PUBLISH: ska-tmc-simulators
+include:
+# Helm Chart Publish
+# https://developer.skatelescope.org/en/latest/development/software_package_release_procedure.html#package-and-publish-helm-charts-to-the-ska-helm-chart-repository
+- project: 'ska-telescope/templates-repository'
+  file: 'gitlab-ci/includes/helm_publish.yml'
+# Create Gitlab CI badges from CI metrics
+# https://developer.skatelescope.org/en/latest/tools/continuousintegration.html#automated-collection-of-ci-health-metrics-as-part-of-the-ci-pipeline
+- project: 'ska-telescope/templates-repository'
+  file: 'gitlab-ci/includes/post_step.yml'
+
