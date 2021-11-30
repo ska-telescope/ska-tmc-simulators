@@ -19,7 +19,7 @@ global:
   tmcsim:
     registry: artefact.skao.int/ska-telescope
     image: ska-tmc-simulators
-    tag: 0.0.1
+    tag: 0.0.3
     pullPolicy: IfNotPresent
 
   ##  Order of instances resolution ##
