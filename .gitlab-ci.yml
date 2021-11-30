@@ -168,7 +168,7 @@ release simulators:
   tags:
     - docker-executor
   script:
-    - make release-simulators USERNAME=$GITLAB_USER_NAME EMAILID=$GITLAB_USER_EMAIL # Publish tag on the gitlab and tagged image on Nexus
+    - make release-ska-tmc-simulators USERNAME=$GITLAB_USER_NAME EMAILID=$GITLAB_USER_EMAIL # Publish tag on the gitlab and tagged image on Nexus
   when: manual
 
 # Standardised included jobs
