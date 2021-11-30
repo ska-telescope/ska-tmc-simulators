@@ -1,0 +1,56 @@
+display: ":0"
+xauthority: "~/.Xauthority"
+
+global:
+  retry: 
+  - "--sleep=1"
+  - "--tries=100"
+  sub-system:
+    ska-tango-util:
+      enabled: false
+    ska-tango-base:
+      enabled: false
+  minikube: true
+  tangoDatabaseDS: tango-host-databaseds-from-makefile-test
+  tango_host: tango-host-databaseds-from-makefile-test:10000
+  # tango_host: databaseds-tango-base-test:10000
+  dsconfig:
+    timeout: 300s
+    image:
+      registry: artefact.skao.int
+      image: ska-tango-images-tango-dsconfig
+      tag: 1.5.1
+      pullPolicy: IfNotPresent
+  itango:
+    image:
+      registry: artefact.skao.int
+      image: ska-tango-images-tango-itango
+      tag: 9.3.5
+      pullPolicy: IfNotPresent
+
+ska-tango-base:
+  enabled: false
+  vnc:
+    replicas: 1
+    enabled: true
+  tangorest:
+    enabled: true
+    replicas: 1
+  tangodb:
+    use_pv: false
+  
+# tm-simulator
+ska-tmc-simulators:
+  deviceServers:
+    cspmastersimulator:
+      enabled: true
+     
+    sdpmastersimulator:
+      enabled: true
+     
+    cspsubarraysimulator:
+      enabled: true
+    
+    sdpsubarraysimulator:
+      enabled: true
+  
