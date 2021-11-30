@@ -23,12 +23,12 @@ cache:
 
 stages:
   - build
-  - release
   - clean
   - deploy
   - linting
-  - pages
+  - release
   - publish
+  - pages
 
 build ska-tmc-simulators wheel for publication: # Executed on a tag
   stage: build
