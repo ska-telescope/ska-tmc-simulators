@@ -23,11 +23,11 @@ cache:
 
 stages:
   - build
+  - release
   - clean
   - deploy
   - linting
   - pages
-  - release
   - publish
 
 build ska-tmc-simulators wheel for publication: # Executed on a tag
@@ -111,6 +111,7 @@ deploy-simulators:
     kubernetes:
       # This repetition is needed for gitlab to parse the namespace correctly
       namespace: ci-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-mid
+  when: manual
 
 tmc-simulators_uninstall:
   stage: clean
