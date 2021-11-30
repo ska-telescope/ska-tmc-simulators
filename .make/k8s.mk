@@ -228,37 +228,6 @@ rlint:  ## run lint check on Helm Chart using gitlab-runner
   --env "CI_REGISTRY=$(CI_REGISTRY)" \
 	lint-check-chart || true
 
-# K8s testing with local gitlab-runner
-# Run the powersupply tests in the TEST_RUNNER run to completion Pod:
-#   set namespace
-#   install dependencies for Helm and kubectl
-#   deploy into namespace
-#   run test in run to completion Pod
-#   extract Pod logs
-#   set test return code
-#   delete
-#   delete namespace
-#   return result
-rk8s_test:  ## run k8s_test on K8s using gitlab-runner
-	if [ -n "$(RDEBUG)" ]; then DEBUG_LEVEL=debug; else DEBUG_LEVEL=warn; fi && \
-	KUBE_NAMESPACE=`git rev-parse --abbrev-ref HEAD | tr -dc 'A-Za-z0-9\-' | tr '[:upper:]' '[:lower:]'` && \
-	gitlab-runner --log-level $${DEBUG_LEVEL} exec $(EXECUTOR) \
-	--docker-privileged \
-	--docker-disable-cache=false \
-	--docker-host $(DOCKER_HOST) \
-	--docker-volumes  $(DOCKER_VOLUMES) \
-	--docker-pull-policy always \
-	--timeout $(TIMEOUT) \
-	--env "DOCKER_HOST=$(DOCKER_HOST)" \
-	--env "DOCKER_REGISTRY_USER_LOGIN=$(DOCKER_REGISTRY_USER_LOGIN)" \
-	--env "CI_REGISTRY_PASS_LOGIN=$(CI_REGISTRY_PASS_LOGIN)" \
-	--env "CI_REGISTRY=$(CI_REGISTRY)" \
-	--env "KUBE_CONFIG_BASE64=$(KUBE_CONFIG_BASE64)" \
-	--env "KUBECONFIG=$(KUBECONFIG)" \
-	--env "KUBE_NAMESPACE=$${KUBE_NAMESPACE}" \
-	test-chart || true
-
-
 helm_tests:  ## run Helm chart tests
 	helm test $(HELM_RELEASE) --cleanup
 
