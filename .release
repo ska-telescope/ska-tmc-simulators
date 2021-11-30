@@ -14,5 +14,5 @@ release=0.0.1
 tag=0.0.1
 tag_description= Separate repository for simulators
 release_notes=This release contains:<br/><ul><li>Separate repository for simulators</li></ul><br/>
-gitlab_username=shraddhabajare
-private_token=gs5P3d8T6ur5VCYWn1Ky
+gitlab_username=JayantKumbhar
+private_token=glpat-RN39qKigvKHmZy3snsPe
