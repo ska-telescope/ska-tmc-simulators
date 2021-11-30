@@ -7,7 +7,6 @@ TANGO_HOST ?= $(TANGO_DATABASE_DS):10000## TANGO_HOST is an input!
 STANDALONE_MODE ?= false
 
 CHARTS ?= ska-tmc-simulators ska-tmc-simulators-umbrella  ## list of charts to be published on gitlab -- umbrella charts for testing purpose
-# KUBE_NAMESPACE ?= tmcmidsimulators
 CUSTOM_SUBARRAY_COUNT ?= 1
 CUSTOM_DISHES_LIST ?= {01}
 CHART_DEBUG ?= # --debug
@@ -69,8 +68,8 @@ dep-up: ## update dependencies for every charts in the env var CHARTS
 	helm dependency update $${i}; \
 	done;
 
-# This job is used to create a deployment of ska-tmc-mid charts
-# Currently umbrealla chart for ska-tmc-mid path is given
+# This job is used to create a deployment of ska-tmc-simulators charts
+# Currently umbrealla chart for ska-tmc-simulators path is given
 install-chart: dep-up namespace  ## install the helm chart with name HELM_RELEASE and path UMBRELLA_CHART_PATH on the namespace KUBE_NAMESPACE
 	# Understand this better
 	@sed -e 's/CI_PROJECT_PATH_SLUG/$(CI_PROJECT_PATH_SLUG)/' $(UMBRELLA_CHART_PATH)values.yaml > generated_values.yaml; \
@@ -83,52 +82,36 @@ install-chart: dep-up namespace  ## install the helm chart with name HELM_RELEAS
 
 # A Custom deployment
 # Default settings:
-#   CUSTOM_DISHES_LIST ?= {01}
 #   CUSTOM_SUBARRAY_COUNT ?= 1
-# install-custom-chart:
-# 	@echo global.dishes=$(CUSTOM_DISHES_LIST)
-install-custom-chart: dep-up namespace namespace_sdp ## Specify the number of subarrays and dishes as paramaters. E.g NUM_SUBARRAYS=3 DISHES={1,2,7} make install-custom-chart
+install-custom-chart: dep-up namespace ## Specify the number of subarrays E.g NUM_SUBARRAYS=3 make install-custom-chart
 	@sed -e 's/CI_PROJECT_PATH_SLUG/$(CI_PROJECT_PATH_SLUG)/' $(CHART_PATH)values.yaml > generated_values.yaml; \
 	sed -e 's/CI_ENVIRONMENT_SLUG/$(CI_ENVIRONMENT_SLUG)/' generated_values.yaml > values.yaml; \
 	helm install $(HELM_RELEASE) \
 	--set minikube=$(MINIKUBE) \
-	--set "global.dishes=$(CUSTOM_DISHES_LIST)" \
 	--set global.subarray_count=$(CUSTOM_SUBARRAY_COUNT) \
-	--set global.minikube=$(MINIKUBE) \
-	--set global.tango_host=$(TANGO_HOST) \
-	--set tangoDatabaseDS=$(TANGO_DATABASE_DS) \
-	--set sdp.helmdeploy.namespace=$(SDP_KUBE_NAMESPACE) \
 	--values values.yaml $(CUSTOM_VALUES) \
 	 $(CHART_PATH) --namespace $(KUBE_NAMESPACE) $(CHART_DEBUG); \
 	 rm generated_values.yaml; \
 	 rm values.yaml
-
-
-
 
 template-chart: clean dep-up## install the helm chart with name RELEASE_NAME and path UMBRELLA_CHART_PATH on the namespace KUBE_NAMESPACE
 	@sed -e 's/CI_PROJECT_PATH_SLUG/$(CI_PROJECT_PATH_SLUG)/' $(CHART_PATH)values.yaml > generated_values.yaml; \
 	sed -e 's/CI_ENVIRONMENT_SLUG/$(CI_ENVIRONMENT_SLUG)/' generated_values.yaml > values.yaml; \
 	helm template $(RELEASE_NAME) \
 	--set minikube=$(MINIKUBE) \
-	--set global.minikube=$(MINIKUBE) \
-	--set global.tango_host=$(TANGO_HOST) \
-	--set tangoDatabaseDS=$(TANGO_DATABASE_DS) \
-	--set sdp.helmdeploy.namespace=$(SDP_KUBE_NAMESPACE) \
 	--values values.yaml $(CUSTOM_VALUES) \
 	--debug \
 	 $(CHART_PATH) --namespace $(KUBE_NAMESPACE); \
 	 rm generated_values.yaml; \
 	 rm values.yaml
 
-# This job is used to delete a deployment of ska-tmc-mid charts
-# Currently umbreall chart for ska-tmc-mid path is given
-uninstall-chart: ## uninstall the ska-tmc-mid helm chart on the namespace ska-tmc
+# Currently umbrella chart for ska-tmc-simulators path is given
+uninstall-chart: ## uninstall the ska-tmc-umbrella helm chart on the namespace tmcmidsimulators
 	helm uninstall  $(HELM_RELEASE) --namespace $(KUBE_NAMESPACE)
 
-reinstall-chart: uninstall-chart install-chart ## reinstall the ska-tmc-mid helm chart on the namespace ska-tmc
+reinstall-chart: uninstall-chart install-chart ## reinstall the ska-tmc-simulators helm chart on the namespace ska-tmc
 
-upgrade-chart: ## upgrade the ska-tmc-mid helm chart on the namespace ska-tmc
+upgrade-chart: ## upgrade the ska-tmc-simulators helm chart on the namespace ska-tmc-simulators
 	helm upgrade --set minikube=$(MINIKUBE) $(HELM_RELEASE) $(CHART_PATH) --namespace $(KUBE_NAMESPACE) 
 
 wait:## wait for pods to be ready
@@ -310,6 +293,3 @@ dump_dashboards: # @param: name of the dashborad
 
 load_dashboards: # @param: name of the dashborad
 	kubectl exec -i pod/mongodb-webjive-test-0 -n $(KUBE_NAMESPACE) -- mongorestore --archive < $(DASHBOARD)
-
-# How to run lint job
-# F
