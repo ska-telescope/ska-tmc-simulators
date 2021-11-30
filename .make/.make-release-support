@@ -121,14 +121,14 @@ function createGitTag(){
 function getSha(){
   tag=$(awk -F= '/^tag=/{print $2}' .release)
   images="$(docker images --format {{.Repository}}:{{.Tag}}:{{.Digest}})"
-  sha=$(docker images --format {{.Repository}}_{{.Tag}}_{{.Digest}} | grep subarraynode | grep $tag | awk -F_ '/artefact.skao.int/ska-telescope/ska-tmc-subarraynode-mid_$tag_ {print $3}')
+  sha=$(docker images --format {{.Repository}}_{{.Tag}}_{{.Digest}} | grep simulators | grep $tag | awk -F_ '/artefact.skao.int/ska-telescope/ska-tmc-simulators_$tag_ {print $3}')
   echo $sha
 }
 
 # Delete docker image from nexus repo using sha
 function deleteImageFromNexus(){
   sha=$(getSha)
-  result=$(curl -X "DELETE" -u $CAR_RAW_USERNAME:$CAR_RAW_PASSWORD https://artefact.skao.int/v2/ska-telescope/ska-tmc-subarraynode-mid/manifests/"$sha" --verbose)
+  result=$(curl -X "DELETE" -u $CAR_RAW_USERNAME:$CAR_RAW_PASSWORD https://artefact.skao.int/v2/ska-telescope/ska-tmc-simulators/manifests/"$sha" --verbose)
 }
 
 # Publish tag. (If there is error while publishing tag, docker image with same tag will be deleted.)
@@ -137,7 +137,7 @@ function gitPush() {
   git_username=$(awk -F= '/^gitlab_username=/{print $2}' .release)
   private_token=$(awk -F= '/^private_token=/{print $2}' .release)
   echo $tag
-  $(git push https://"$git_username":"$private_token"@gitlab.com/ska-telescope/ska-tmc-subarraynode-mid.git "$tag")
+  $(git push https://"$git_username":"$private_token"@gitlab.com/ska-telescope/ska-tmc-simulators.git "$tag")
   result=$(echo $?)
   if [ $result -ne 0 ];
   then
@@ -150,7 +150,7 @@ function getReleaseDescription(){
 	awk -F= '/^release_notes=/{print $2}' .release
 }
 
-# Create GitLab release for SubarrayNode with version given in .release file
+# Create GitLab release for SKA-TMC-SIMULATORS with version given in .release file
 function releaseSN() {
   name=$(getRelease)
   tag_name=$(getRelease)
@@ -164,7 +164,7 @@ function releaseSN() {
   echo $result
 }
 
-# Delete released subarraynode with version given in .release file
+# Delete released SKA-TMC-SIMULATORS with version given in .release file
 function deleteSNRelease() {
   tag_name=$(getRelease)
   private_token=$(awk -F= '/^private_token=/{print $2}' .release)
@@ -177,10 +177,10 @@ function deleteTag() {
   tag=$(awk -F= '/^tag=/{print $2}' .release)
   git_username=$(awk -F= '/^gitlab_username=/{print $2}' .release)
   private_token=$(awk -F= '/^private_token=/{print $2}' .release)
-  git push --delete https://"$git_username":"$private_token"@gitlab.com/ska-telescope/ska-tmc-subarraynode-mid.git "$tag"
+  git push --delete https://"$git_username":"$private_token"@gitlab.com/ska-telescope/ska-tmc-simulators.git "$tag"
 }
 
-# Create GitLab release subarraynode with version given in .release file.
+# Create GitLab release SKA-TMC-SIMULATORS with version given in .release file.
 # If there is an error while creating GitLab release, published tag and docker (with same version number) image will be deleted.)
 function releaseSNIfNoError() {
   tag_name=$(getRelease)
@@ -192,12 +192,12 @@ function releaseSNIfNoError() {
   then
     echo "THIS RELEASE IS ALREADY EXISTS. NEW RELEASE WITH SAME VERSION IS NOT POSSIBLE."
   else
-    echo "RELEASING SUBARRAYNODE..."
+    echo "RELEASING SKA-TMC-SIMULATORS..."
     releaseSN
     checkReleaseExists=$(curl --header "PRIVATE-TOKEN: "$private_token "https://gitlab.com/api/v4/projects/""$CI_PROJECT_ID""/releases/""$tag_name" | \
     python3 -c "import sys, json; print(json.load(sys.stdin)['tag_name'])")
     if [ "$checkReleaseExists" != "$tag_name" ]; then
-        echo "ERROR WHILE RELEASING SUBARRAYNODE. TAG AND IMAGE WILL BE DELETED."
+        echo "ERROR WHILE RELEASING SKA-TMC-SIMULATORS. TAG AND IMAGE WILL BE DELETED."
         deleteTag
         deleteImageFromNexus
     fi
