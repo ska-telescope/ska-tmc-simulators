@@ -33,18 +33,20 @@ stages:
   - pages
 
 build ska-tmc-simulators wheel for publication: # Executed on a tag
+  allow_failure: true
   stage: build
-  image: $SKA_K8S_TOOLS_DEPLOY_IMAGE
+  image: $SKA_K8S_TOOLS_BUILD_DEPLOY
   tags:
     - k8srunner
+  before_script:
+    - '[ -f .make/python.mk ] || (echo "File python.mk not included in Makefile; exit 1")'
+    - 'make help | grep python-build'
   script:
-    - python3 setup.py egg_info sdist bdist_wheel
-    - /usr/local/bin/extract-metadata.sh MANIFEST.skao.int
-    - for filename in ./dist/*.whl ./dist/*.tar.gz; do
-    -   /usr/local/bin/patch-metadata.sh $filename MANIFEST.skao.int
-    - done
-  only:
-    - tags
+    - make python-build PYTHON_BUILD_TYPE="tag_pyproject"
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      exists:
+      - pyproject.toml
   artifacts:
     paths:
       - ./dist/
