@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # This file is part of the CspSubarraySimulator project
@@ -50,7 +50,6 @@ setup(
             "CspMasterSimulatorDS=cspmastersimulator.csp_master:main",
             "SdpMasterSimulatorDS=sdpmastersimulator.sdp_master:main",
         ]
-
     },
     author="Team NCRA",
     author_email="telmgt-internal@googlegroups.com",
