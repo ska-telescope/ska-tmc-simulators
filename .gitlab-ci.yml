@@ -56,21 +56,15 @@ build ska-tmc-simulators wheel for development: # Executed on a commit
   tags:
     - k8srunner
   before_script:
-    - *deprecation-notice
-  script: |
-    sed -i -r 's|^(version.*=.*")(.*)(")$|\1\2+dev.c'"$CI_COMMIT_SHORT_SHA"'\3|g' pyproject.toml
-    python3 -m build
-    /usr/local/bin/extract-metadata.sh MANIFEST.skao.int
-    for filename in ./dist/*.whl ./dist/*.tar.gz; do
-      /usr/local/bin/patch-metadata.sh $filename MANIFEST.skao.int
-    done
-  after_script:
-    - *deprecation-notice
+    - '[ -f .make/python.mk ] || (echo "File python.mk not included in Makefile; exit 1")'
+    - 'make help | grep python-build'
+  script:
+    - make python-build PYTHON_BUILD_TYPE="non_tag_pyproject"
   rules:
-    - if: $CI_COMMIT_TAG
+    - if: '$CI_COMMIT_TAG'
       when: never
     - exists:
-      - pyproject.toml
+        - pyproject.toml
   artifacts:
     paths:
       - ./dist/
