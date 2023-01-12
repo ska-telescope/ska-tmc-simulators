@@ -1,15 +1,15 @@
-import pkg_resources
 import logging
 
+import pkg_resources
+from ska_ser_logging import configure_logging
+from tango import Database
+from tango_simlib.tango_launcher import register_device
 from tango_simlib.tango_sim_generator import (
     configure_device_models,
     get_tango_device_server,
 )
-
-from ska_ser_logging import configure_logging
-from tango import Database
 from tango_simlib.utilities.helper_module import get_server_name
-from tango_simlib.tango_launcher import register_device
+
 
 def get_tango_server_class(device_name):
     """Create and return the Tango device class for Sdp Master device
@@ -27,14 +27,14 @@ def get_tango_server_class(device_name):
     logger.info("server name: %s, instance %s", server_name, instance)
     tangodb = Database()
     register_device(device_name, "SdpMaster", server_name, instance, tangodb)
-    tangodb.put_device_property(device_name, {"polled_attr": ["State", "1000"]})
+    tangodb.put_device_property(
+        device_name, {"polled_attr": ["State", "1000"]}
+    )
 
-    ## Create Simulator
+    # Create Simulator
     sim_data_files = []
     sim_data_files.append(
-        pkg_resources.resource_filename(
-            "sdpmastersimulator", "SdpMaster.fgo"
-        )
+        pkg_resources.resource_filename("sdpmastersimulator", "SdpMaster.fgo")
     )
     sim_data_files.append(
         pkg_resources.resource_filename(
@@ -58,7 +58,7 @@ def get_tango_server_class(device_name):
     # test/nodb/sdpmaster is used for testing
     if device_name == "test/nodb/sdpmaster":
         configure_args["test_device_name"] = device_name
-        
+
     model = configure_device_models(sim_data_files, **configure_args)
     tango_ds = get_tango_device_server(model, sim_data_files)
 

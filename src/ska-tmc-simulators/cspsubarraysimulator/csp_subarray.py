@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # Standard python import
 import sys
+
+from tango.server import run
+
 # Additional import
 from .utils import get_tango_server_class
-from tango.server import run
 
 # File generated on Mon Jul 12 13:24:36 2021 by tango-simlib-generator
 
@@ -19,6 +21,7 @@ def get_csp_subarray_simulator():
     tango_ds = get_tango_server_class(device_name)
     return tango_ds[0]
 
+
 def main(args=None, **kwargs):
     """
     Runs the CspSubarraySimulator.
@@ -33,6 +36,7 @@ def main(args=None, **kwargs):
     ret_val = run((CspSubarraySimulator,), args=args, **kwargs)
 
     return ret_val
+
 
 if __name__ == "__main__":
     main()

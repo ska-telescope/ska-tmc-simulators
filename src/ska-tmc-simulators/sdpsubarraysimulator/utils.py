@@ -1,13 +1,14 @@
-import pkg_resources
 import logging
-from tango import Database
+
+import pkg_resources
 from ska_ser_logging import configure_logging
-from tango_simlib.utilities.helper_module import get_server_name
+from tango import Database
 from tango_simlib.tango_launcher import register_device
 from tango_simlib.tango_sim_generator import (
     configure_device_models,
     get_tango_device_server,
 )
+from tango_simlib.utilities.helper_module import get_server_name
 
 
 def get_tango_server_class(device_name):
@@ -24,7 +25,7 @@ def get_tango_server_class(device_name):
     logger = logging.getLogger(logger_name)
     logger.info("Logging started for %s.", device_name)
 
-    ## Register simulator device
+    # Register simulator device
     logger.info("registering device: %s", device_name)
     server_name, instance = get_server_name().split("/")
     logger.info("server name: %s, instance %s", server_name, instance)
