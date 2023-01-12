@@ -32,7 +32,7 @@ stages:
   - publish
   - pages
 
-build ska-tmc-simulators wheel for publication: # Executed on a tag
+build wheel for publication: # Executed on a tag
   allow_failure: true
   stage: build
   image: $SKA_K8S_TOOLS_BUILD_DEPLOY
@@ -51,7 +51,7 @@ build ska-tmc-simulators wheel for publication: # Executed on a tag
     paths:
       - ./dist/
 
-build ska-tmc-simulators wheel for development: # Executed on a commit
+build wheel for development: # Executed on a commit
   allow_failure: true
   stage: build
   image: $SKA_K8S_TOOLS_BUILD_DEPLOY
