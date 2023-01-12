@@ -5,16 +5,13 @@ description = "SKA-TMC-SIMULATORS"
 authors = ["Team HIMALAYA" , "Team SAHYADRI"]
 license = "BSD-3-Clause"
 
-packages = [
-    { include = "ska_tmc_simulators", from = "src" },
-]
-include = [
-    { path = 'tests'}
-]
 
-# [tool.poetry.scripts]
-# SdpSubarrayLeafNodeDS = 'ska_tmc_sdpsubarrayleafnode.sdp_subarray_leaf_node:main'
-# SdpMasterLeafNodeDS = 'ska_tmc_sdpmasterleafnode.sdp_master_leaf_node:main'
+[tool.poetry.scripts]
+CspSubarraySimulatorDS="ska_tmc_simulators.cspsubarraysimulator.csp_subarray:main"
+SdpSubarraySimulatorDS="ska_tmc_simulators.sdpsubarraysimulator.sdp_subarray:main"
+CspMasterSimulatorDS="ska_tmc_simulators.cspmastersimulator.csp_master:main"
+SdpMasterSimulatorDS="ska_tmc_simulators.sdpmastersimulator.sdp_master:main"
+
 
 [[tool.poetry.source]]
 name = 'ska-nexus'
