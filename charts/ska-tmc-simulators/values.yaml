@@ -3,8 +3,8 @@ xauthority: "~/.Xauthority"
 
 enabled: true
 
-system: TM-simulators
-telescope: SKA-tmc-simulators
+system: TMC-simulators
+telescope: SKA-TMC-SIMULATORS
 subsystem: ska-tmc-simulators
 
 labels:
@@ -22,12 +22,6 @@ global:
     tag: 0.0.3
     pullPolicy: IfNotPresent
 
-  ##  Order of instances resolution ##
-  # .Values.global.dishes & .Values.global.subarray_count
-  # .Values.deviceServers.<device>.instances
-  # File, data/<device>.yaml, instances
-
-
   # subarray_count, this will be expanded (1 to N inclusive) and applied to instances of:
   # deviceServers.cspsubarrayleafnode, deviceServers.sdpsubarrayleafnode, deviceServers.subarraynode
   subarray_devices:
@@ -39,7 +33,7 @@ itango:
   image:
     registry: artefact.skao.int
     image: ska-tango-images-tango-itango
-    tag: 9.3.5
+    tag: 9.3.9
     pullPolicy: IfNotPresent
 
 resources:
@@ -67,4 +61,3 @@ deviceServers:
     enabled: false
     instances: ["01", "02", "03"]
     file: "data/sdpsubarraysimulator.yaml"
- 

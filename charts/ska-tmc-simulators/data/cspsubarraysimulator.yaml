@@ -11,7 +11,7 @@ server:
       classes:
         - name: "CspSubarraySimulator"
           devices:
-            - name: "mid_csp/elt/subarray_{{ . }}"
+            - name: "mid-csp/subarray/{{ . }}"
               properties:
                 - name: "SkaLevel"
                   values:
@@ -42,11 +42,10 @@ server:
                         - "-1"
                         - "1"
   {{- end }}
-depends_on: 
+depends_on:
   - device: sys/database/2
 image:
   registry: "{{.Values.global.tmcsim.registry}}"
   image: "{{.Values.global.tmcsim.image}}"
   tag: "{{.Values.global.tmcsim.tag}}"
   pullPolicy: "{{.Values.global.tmcsim.pullPolicy}}"
-    

@@ -1,0 +1,8 @@
+docs/build
+build
+scripts/bats-*
+PrivateRules.mak
+tests/scripts/bats-*
+.terraform
+.terraform.lock.hcl
+*.tfstate

@@ -56,16 +56,20 @@ CI_PROJECT_DIR ?= .
 KUBE_CONFIG_BASE64 ?=  ## base64 encoded kubectl credentials for KUBECONFIG
 KUBECONFIG ?= /etc/deploy/config ## KUBECONFIG location
 
+MARK =
+ADD_ARGS += --forked
+FILE ?= tests
+
+PYTHON_VARS_AFTER_PYTEST ?= -m '$(MARK)' $(ADD_ARGS) $(FILE)
+
 #VALUES_FILE ?= charts/ska-tmc-mid/values.yaml
-CUSTOM_VALUES = 
+CUSTOM_VALUES =
 
 ifneq ($(CI_JOB_ID),)
-CI_PROJECT_IMAGE := 
+CI_PROJECT_IMAGE :=
 # CUSTOM_VALUES = --set global.skatmc.registry=registry.gitlab.com/ska-telescope \
 # 	--set global.skatmc.image=ska-tmc-simulators \
 # 	--set global.skatmc.tag=$(CI_COMMIT_SHORT_SHA)
-
-
 else
 endif
 
@@ -86,9 +90,15 @@ TEST_RUNNER = test-runner-$(CI_JOB_ID)-$(KUBE_NAMESPACE)-$(HELM_RELEASE)
 # ('make interactive', 'make test', etc.) are defined in this file.
 #
 
-include .make/release.mk
-include .make/k8s.mk
-include .make/test.mk
+-include .make/k8s.mk
+-include .make/python.mk
+-include .make/helm.mk
+-include .make/oci.mk
+-include .make/docs.mk
+-include .make/release.mk
+-include .make/make.mk
+-include .make/help.mk
+-include PrivateRules.mak
 
 #
 # Defines a default make target so that help is printed if make is called
@@ -96,4 +106,4 @@ include .make/test.mk
 #
 .DEFAULT_GOAL := help
 
-.PHONY: all test up down help k8s show lint deploy delete logs describe mkcerts localip namespace delete_namespace ingress_check kubeconfig kubectl_dependencies helm_dependencies rk8s_test k8s_test rlint
+# .PHONY: all test up down help k8s show lint deploy delete logs describe mkcerts localip namespace delete_namespace ingress_check kubeconfig kubectl_dependencies helm_dependencies rk8s_test k8s_test rlint

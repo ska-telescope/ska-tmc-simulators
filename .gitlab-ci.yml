@@ -1,10 +1,12 @@
 # GitLab CI in conjunction with GitLab Runner can use Docker Engine to test and build any application.
 # Docker, when used with GitLab CI, runs each job in a separate and isolated container using the predefined image that is set up in .gitlab-ci.yml.
 # In this case we use the latest python docker image to build and test this project.
-image: artefact.skao.int/ska-tango-images-pytango-builder:9.3.10
+image: $SKA_K8S_TOOLS_DOCKER_BUILDER_IMAGE
 
 variables:
+  GIT_SUBMODULE_STRATEGY: recursive
   DOCKER_DRIVER: overlay2
+  CHARTS_TO_PUBLISH: ska-tmc-simulators
 
 # cache is used to specify a list of files and directories which should be cached between jobs. You can only use paths that are within the project workspace.
 # If cache is defined outside the scope of jobs, it means it is set globally and all jobs will use that definition
@@ -22,13 +24,26 @@ cache:
 # It is also specified that only the master branch will be subject of this job.
 
 stages:
+  - lint
+  - join-reports
   - build
-  - clean
-  - deploy
-  - linting
-  - release
+  - test
   - publish
   - pages
+  - scan
+  - lifecycle
+
+join_linting_reports:
+  stage: join-reports
+  tags:
+    - k8srunner
+  script:
+    - echo "This step is needed as the artifacts can't be passed in the same stage"
+    - make join-lint-reports
+  artifacts:
+    paths:
+      - build/
+    when: always
 
 build ska-tmc-simulators wheel for publication: # Executed on a tag
   stage: build
@@ -78,19 +93,6 @@ build-image:
     paths:
       - current_tag.txt
 
-
-linting:
-  stage: linting
-  image: artefact.skao.int/ska-tango-images-pytango-builder:9.3.10
-  tags:
-    - docker-executor
-  script:
-    - make lint
-  allow_failure: true
-  artifacts:
-    paths:
-      - ./build
-
 deploy-simulators:
   stage: deploy
   dependencies:
@@ -132,34 +134,6 @@ tmc-simulators_uninstall:
     action: stop
   when: manual
 
-
-
-publish to nexus:
-  stage: publish
-  tags:
-    - docker-executor
-  script:
-    - python3 -m pip install twine
-    - twine upload --username ${CAR_PYPI_USERNAME} --password ${CAR_PYPI_PASSWORD} --repository-url $CAR_PYPI_REPOSITORY_URL ./ska-tmc/ska-tmc-simulators/dist/*
-  when: manual
-  only:
-    variables:
-      - $CI_COMMIT_MESSAGE =~ /^.+$/ # Confirm tag message exists
-      - $CI_COMMIT_TAG =~ /^((([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)$/ # Confirm semantic versioning of tag
-
-pages:
-  stage: pages
-  tags:
-    - docker-executor
-  only:
-    - master
-  script:
-    - mv build public
-    - mv public/reports/ska-tmc-simulators_htmlcov/* public
-  artifacts:
-    paths:
-      - public
-
 release simulators:
   stage: release
   image: $SKA_K8S_TOOLS_DOCKER_BUILDER_IMAGE
@@ -172,15 +146,34 @@ release simulators:
   when: manual
 
 # Standardised included jobs
-variables:
-  CHARTS_TO_PUBLISH: ska-tmc-simulators
 include:
-# Helm Chart Publish
-# https://developer.skatelescope.org/en/latest/development/software_package_release_procedure.html#package-and-publish-helm-charts-to-the-ska-helm-chart-repository
+# # # Helm Chart linting and Publish
+# Note: Commenting this part to Disable helm chart linting and Publish job from the pipeline
+# - project: 'ska-telescope/templates-repository'
+#   file: 'gitlab-ci/includes/helm-chart.gitlab-ci.yml'
+
+# # Python packages build,lint, test and publish
 - project: 'ska-telescope/templates-repository'
-  file: 'gitlab-ci/includes/helm_publish.yml'
+  file: 'gitlab-ci/includes/python.gitlab-ci.yml'
+
+# # OCI images build and publish
+- project: 'ska-telescope/templates-repository'
+  file: 'gitlab-ci/includes/oci-image.gitlab-ci.yml'
+
+# # Docs pages
+- project: 'ska-telescope/templates-repository'
+  file: 'gitlab-ci/includes/docs.gitlab-ci.yml'
+
+# k8s steps
+- project: 'ska-telescope/templates-repository'
+  file: 'gitlab-ci/includes/k8s.gitlab-ci.yml'
+
 # Create Gitlab CI badges from CI metrics
 # https://developer.skatelescope.org/en/latest/tools/continuousintegration.html#automated-collection-of-ci-health-metrics-as-part-of-the-ci-pipeline
 - project: 'ska-telescope/templates-repository'
-  file: 'gitlab-ci/includes/post_step.yml'
+  file: 'gitlab-ci/includes/finaliser.gitlab-ci.yml'
+
+# Release Automation
+- project: 'ska-telescope/templates-repository'
+  file: 'gitlab-ci/includes/release.gitlab-ci.yml'
 
