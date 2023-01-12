@@ -32,45 +32,6 @@ stages:
   - publish
   - pages
 
-build wheel for publication: # Executed on a tag
-  allow_failure: true
-  stage: build
-  image: $SKA_K8S_TOOLS_BUILD_DEPLOY
-  tags:
-    - k8srunner
-  before_script:
-    - '[ -f .make/python.mk ] || (echo "File python.mk not included in Makefile; exit 1")'
-    - 'make help | grep python-build'
-  script:
-    - make python-build PYTHON_BUILD_TYPE="tag_pyproject"
-  rules:
-    - if: '$CI_COMMIT_TAG'
-      exists:
-      - pyproject.toml
-  artifacts:
-    paths:
-      - ./dist/
-
-build wheel for development: # Executed on a commit
-  allow_failure: true
-  stage: build
-  image: $SKA_K8S_TOOLS_BUILD_DEPLOY
-  tags:
-    - k8srunner
-  before_script:
-    - '[ -f .make/python.mk ] || (echo "File python.mk not included in Makefile; exit 1")'
-    - 'make help | grep python-build'
-  script:
-    - make python-build PYTHON_BUILD_TYPE="non_tag_pyproject"
-  rules:
-    - if: '$CI_COMMIT_TAG'
-      when: never
-    - exists:
-        - pyproject.toml
-  artifacts:
-    paths:
-      - ./dist/
-
 build-image:
   stage: build
   image: $SKA_K8S_TOOLS_DOCKER_BUILDER_IMAGE
@@ -185,4 +146,7 @@ include:
 # https://developer.skatelescope.org/en/latest/tools/continuousintegration.html#automated-collection-of-ci-health-metrics-as-part-of-the-ci-pipeline
 - project: 'ska-telescope/templates-repository'
   file: 'gitlab-ci/includes/post_step.yml'
+
+- project: 'ska-telescope/templates-repository'
+  file: 'gitlab-ci/includes/python-build.gitlab-ci.yml'
 
