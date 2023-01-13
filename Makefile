@@ -56,11 +56,7 @@ CI_PROJECT_DIR ?= .
 KUBE_CONFIG_BASE64 ?=  ## base64 encoded kubectl credentials for KUBECONFIG
 KUBECONFIG ?= /etc/deploy/config ## KUBECONFIG location
 
-MARK =
-ADD_ARGS += --forked
-FILE ?= tests
-
-PYTHON_VARS_AFTER_PYTEST ?= -m '$(MARK)' $(ADD_ARGS) $(FILE)
+PYTHON_LINT_TARGET = src/
 
 #VALUES_FILE ?= charts/ska-tmc-mid/values.yaml
 CUSTOM_VALUES =
@@ -92,13 +88,8 @@ TEST_RUNNER = test-runner-$(CI_JOB_ID)-$(KUBE_NAMESPACE)-$(HELM_RELEASE)
 
 -include .make/k8s.mk
 -include .make/python.mk
--include .make/helm.mk
--include .make/oci.mk
--include .make/docs.mk
 -include .make/release.mk
--include .make/make.mk
--include .make/help.mk
--include PrivateRules.mak
+-include .make/test.mk
 
 #
 # Defines a default make target so that help is printed if make is called

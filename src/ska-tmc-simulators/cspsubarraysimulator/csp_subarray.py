@@ -32,8 +32,8 @@ def main(args=None, **kwargs):
     :return: CspSubarraySimulator TANGO object.
 
     """
-    CspSubarraySimulator = get_csp_subarray_simulator()
-    ret_val = run((CspSubarraySimulator,), args=args, **kwargs)
+    cspsubarraysimulator = get_csp_subarray_simulator()
+    ret_val = run((cspsubarraysimulator,), args=args, **kwargs)
 
     return ret_val
 

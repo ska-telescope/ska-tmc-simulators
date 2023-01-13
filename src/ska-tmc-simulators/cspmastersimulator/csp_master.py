@@ -24,8 +24,8 @@ def main(args=None, **kwargs):
     :return: CspMasterSimulator TANGO object.
 
     """
-    CspMasterSimulator = get_csp_master_simulator()
-    ret_val = run((CspMasterSimulator,), args=args, **kwargs)
+    cspmastersimulator = get_csp_master_simulator()
+    ret_val = run((cspmastersimulator,), args=args, **kwargs)
     return ret_val
 
 

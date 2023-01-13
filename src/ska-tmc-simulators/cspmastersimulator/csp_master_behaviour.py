@@ -149,10 +149,10 @@ def get_enum_str(quantity):
     :return: str
         Current string value of a DevEnum attribute
     """
-    EnumClass = enum.IntEnum(
+    enumclass = enum.IntEnum(
         "EnumLabels", quantity.meta["enum_labels"], start=0
     )
-    return EnumClass(quantity.last_val).name
+    return enumclass(quantity.last_val).name
 
 
 def set_enum(quantity, label, timestamp):

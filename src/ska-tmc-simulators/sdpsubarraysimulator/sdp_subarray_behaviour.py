@@ -18,7 +18,7 @@ from tango import DevState, ErrSeverity, Except
 MODULE_LOGGER = logging.getLogger(__name__)
 
 
-class OverrideSdpSubarray(object):
+class OverrideSdpSubarray:
     def action_on(
         self, model, tango_dev=None, data_input=None
     ):  # pylint: disable=W0613
@@ -31,8 +31,8 @@ class OverrideSdpSubarray(object):
         if tango_dev.get_state() in _allowed_modes:
             tango_dev.set_state(DevState.ON)
             model.logger.info("SDP Subarray transitioned to the ON state.")
-            sdp_mode_healthState = model.sim_quantities["healthState"]
-            set_enum(sdp_mode_healthState, "OK", model.time_func())
+            sdp_mode_healthstate = model.sim_quantities["healthState"]
+            set_enum(sdp_mode_healthstate, "OK", model.time_func())
         else:
             Except.throw_exception(
                 "ON Command Failed",
@@ -53,8 +53,8 @@ class OverrideSdpSubarray(object):
         if tango_dev.get_state() in _allowed_modes:
             tango_dev.set_state(DevState.OFF)
             model.logger.info("Sdp Subarray transitioned to the OFF state.")
-            sdp_mode_healthState = model.sim_quantities["healthState"]
-            set_enum(sdp_mode_healthState, "OK", model.time_func())
+            sdp_mode_healthstate = model.sim_quantities["healthState"]
+            set_enum(sdp_mode_healthstate, "OK", model.time_func())
             model.logger.info("heathState transitioned to OK state")
         else:
             Except.throw_exception(
@@ -432,10 +432,10 @@ def get_enum_str(quantity):
     :return: str
         Current string value of a DevEnum attribute
     """
-    EnumClass = enum.IntEnum(
+    enumclass = enum.IntEnum(
         "EnumLabels", quantity.meta["enum_labels"], start=0
     )
-    return EnumClass(quantity.last_val).name
+    return enumclass(quantity.last_val).name
 
 
 def get_enum_int(quantity, label):

@@ -7,7 +7,6 @@ from tango.server import run
 # Additional import
 from .utils import get_tango_server_class
 
-
 # File generated on Mon Jul 12 13:24:36 2021 by tango-simlib-generator
 
 
@@ -26,16 +25,16 @@ def get_sdp_subarray_simulator():
 
 def main(args=None, **kwargs):
     """
-    Runs the CspSubarraySimulator.
+    Runs the SdpSubarraySimulator.
 
     :param args: Arguments internal to TANGO
     :param kwargs: Arguments internal to TANGO
 
-    :return: CspSubarraySimulator TANGO object.
+    :return: SdpSubarraySimulator TANGO object.
 
     """
-    CspSubarraySimulator = get_sdp_subarray_simulator()
-    ret_val = run((CspSubarraySimulator,), args=args, **kwargs)
+    sdpsubarraysimulator = get_sdp_subarray_simulator()
+    ret_val = run((sdpsubarraysimulator,), args=args, **kwargs)
 
     return ret_val
 

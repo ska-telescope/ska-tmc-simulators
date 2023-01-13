@@ -24,8 +24,8 @@ def main(args=None, **kwargs):
     :return: SdpMasterSimulator TANGO object.
 
     """
-    SdpMasterSimulator = get_sdp_master_simulator()
-    ret_val = run((SdpMasterSimulator,), args=args, **kwargs)
+    sdpmastersimulator = get_sdp_master_simulator()
+    ret_val = run((sdpmastersimulator,), args=args, **kwargs)
     return ret_val
 
 
