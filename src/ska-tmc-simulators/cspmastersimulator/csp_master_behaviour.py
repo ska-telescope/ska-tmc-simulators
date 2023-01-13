@@ -58,6 +58,7 @@ class OverrideCspMaster:
         ]
 
     def command_callback_method(self, model):
+        """Simulates the callback method"""
         model.logger.info("command callback for async command executed.")
 
     def action_off(self, model, tango_dev=None, data_input=None):
@@ -95,10 +96,12 @@ class OverrideCspMaster:
         ]
 
     def action_cspmasterfault(self, model, tango_dev=None, data_input=None):
+        """Sets the device state to Fault"""
         tango_dev.set_state(DevState.FAULT)
         tango_dev.push_change_event("State", tango_dev.get_state())
 
     def action_reset(self, model, tango_dev=None, data_input=None):
+        """Sets the device state back to Off"""
         if tango_dev.get_state() == DevState.FAULT:
             tango_dev.set_state(DevState.OFF)
             tango_dev.push_change_event("State", tango_dev.get_state())

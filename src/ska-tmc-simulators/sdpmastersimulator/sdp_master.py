@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # Standard python import
 # Additional import
+"""Sdp Master Module"""
 from tango.server import run
 
 from .utils import get_tango_server_class
@@ -9,6 +10,7 @@ from .utils import get_tango_server_class
 
 
 def get_sdp_master_simulator():
+    """Returns SDP Master Simulator"""
     device_name = "mid-sdp/control/0"
     tango_ds = get_tango_server_class(device_name)
     return tango_ds[0]

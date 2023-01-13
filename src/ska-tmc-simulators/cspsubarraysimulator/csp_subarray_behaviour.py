@@ -1,4 +1,6 @@
 # Standard python imports
+"""Csp Subarray Behavior Module"""
+# pylint: disable=W0613
 import enum
 import logging
 import threading
@@ -13,6 +15,8 @@ MODULE_LOGGER = logging.getLogger(__name__)
 
 
 class OverrideCspSubarray:
+    """Class for csp subarray simulator device"""
+
     def action_on(
         self, model, tango_dev=None, data_input=None
     ):  # pylint: disable=W0613
@@ -100,10 +104,12 @@ class OverrideCspSubarray:
         ]
 
     def action_cspsubarrayfault(self, model, tango_dev=None, data_input=None):
+        """Sets the device state to Fault"""
         tango_dev.set_state(DevState.FAULT)
         tango_dev.push_change_event("State", tango_dev.get_state())
 
     def action_reset(self, model, tango_dev=None, data_input=None):
+        """Sets the device state back to Off if in FAULT"""
         if tango_dev.get_state() == DevState.FAULT:
             tango_dev.set_state(DevState.OFF)
             tango_dev.push_change_event("State", tango_dev.get_state())
@@ -277,7 +283,7 @@ class OverrideCspSubarray:
             tango_dev.set_status("ObsState in SCANNING")
             model.logger.info("ObsState trasnitioned to SCANNING")
             # create thread
-            self.logger.info("Starting thread to to execute scan.")
+            model.logger.info("Starting thread to to execute scan.")
             scan_thread = threading.Thread(
                 target=self.execute_scan(obsstate_attribute, model, tango_dev)
             )
@@ -387,6 +393,7 @@ class OverrideCspSubarray:
         return [[ResultCode.OK], ["ObsReset command successful on simulator."]]
 
     def execute_scan(self, obsstate_attribute, model, tango_dev):
+        """Simulates a Scan command execution"""
         time.sleep(10)
         set_enum(obsstate_attribute, "READY", model.time_func())
         csp_subarray_obs_state_enum = get_enum_int(obsstate_attribute, "READY")

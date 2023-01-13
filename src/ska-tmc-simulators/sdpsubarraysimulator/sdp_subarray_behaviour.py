@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=W0613
 """
 override class with command handlers for SdpSubarray.
 """
@@ -19,9 +20,9 @@ MODULE_LOGGER = logging.getLogger(__name__)
 
 
 class OverrideSdpSubarray:
-    def action_on(
-        self, model, tango_dev=None, data_input=None
-    ):  # pylint: disable=W0613
+    """Class for sdp subarray simulator device"""
+
+    def action_on(self, model, tango_dev=None, data_input=None):
         """Changes the State of the device to ON."""
         _allowed_modes = (DevState.OFF, DevState.STANDBY)
         if tango_dev.get_state() == DevState.ON:
@@ -41,9 +42,7 @@ class OverrideSdpSubarray:
             )
         return [[ResultCode.OK], ["On command successful on simulator."]]
 
-    def action_off(
-        self, model, tango_dev=None, data_input=None
-    ):  # pylint: disable=W0613
+    def action_off(self, model, tango_dev=None, data_input=None):
         """Changes the State of the device to OFF."""
         _allowed_modes = (DevState.ON, DevState.STANDBY, DevState.ALARM)
         if tango_dev.get_state() == DevState.OFF:
@@ -64,10 +63,8 @@ class OverrideSdpSubarray:
             )
         return [[ResultCode.OK], ["Off command successful on simulator."]]
 
-    def action_assignresources(
-        self, model, tango_dev=None, data_input=None
-    ):  # pylint: disable=W0613
-        """Changes the State of the device to ."""
+    def action_assignresources(self, model, tango_dev=None, data_input=None):
+        """Changes the State of the device to IDLE"""
         obsstate_attribute = model.sim_quantities["obsState"]
         obs_state = get_enum_str(obsstate_attribute)
         if obs_state == "EMPTY":
@@ -136,19 +133,19 @@ class OverrideSdpSubarray:
         ]
 
     def action_sdpsubarrayfault(self, model, tango_dev=None, data_input=None):
+        """Changes the State of the device to Fault"""
         tango_dev.set_state(DevState.FAULT)
         tango_dev.push_change_event("State", tango_dev.get_state())
 
     def action_reset(self, model, tango_dev=None, data_input=None):
+        """Changes the State of the device to Off if in Fault"""
         if tango_dev.get_state() == DevState.FAULT:
             tango_dev.set_state(DevState.OFF)
             tango_dev.push_change_event("State", tango_dev.get_state())
             model.logger.info("Reset command successful on simulator.")
 
-    def action_endscan(
-        self, model, tango_dev=None, data_input=None
-    ):  # pylint: disable=W0613
-        """Changes the State of the device to ."""
+    def action_endscan(self, model, tango_dev=None, data_input=None):
+        """Changes the obsState of the device to READY"""
         obsstate_attribute = model.sim_quantities["obsState"]
         obs_state = get_enum_str(obsstate_attribute)
         if obs_state == "SCANNING":
@@ -169,10 +166,8 @@ class OverrideSdpSubarray:
             )
         return [[ResultCode.OK], ["EndScan command successful on simulator."]]
 
-    def action_abort(
-        self, model, tango_dev=None, data_input=None
-    ):  # pylint: disable=W0613
-        """Changes the State of the device to ."""
+    def action_abort(self, model, tango_dev=None, data_input=None):
+        """Simulates Abort command on SDP Subarray"""
         _allowed_obsstate = (
             "IDLE",
             "READY",
@@ -211,10 +206,8 @@ class OverrideSdpSubarray:
             )
         return [[ResultCode.OK], ["Abort command successful on simulator."]]
 
-    def action_releaseresources(
-        self, model, tango_dev=None, data_input=None
-    ):  # pylint: disable=W0613
-        """Changes the State of the device to ."""
+    def action_releaseresources(self, model, tango_dev=None, data_input=None):
+        """Changes the obsState of the device to EMPTY"""
         obsstate_attribute = model.sim_quantities["obsState"]
         obs_state = get_enum_str(obsstate_attribute)
         if obs_state == "IDLE":
@@ -250,10 +243,8 @@ class OverrideSdpSubarray:
             ["Release_resources command successful on simulator."],
         ]
 
-    def action_configure(
-        self, model, tango_dev=None, data_input=None
-    ):  # pylint: disable=W0613
-        """Changes the State of the device to ."""
+    def action_configure(self, model, tango_dev=None, data_input=None):
+        """Changes the obsState of the device to READY"""
         _allowed_obsstate = ("IDLE", "READY")
         obsstate_attribute = model.sim_quantities["obsState"]
         obs_state = get_enum_str(obsstate_attribute)
@@ -289,10 +280,8 @@ class OverrideSdpSubarray:
             ["Configure command successful on simulator."],
         ]
 
-    def action_scan(
-        self, model, tango_dev=None, data_input=None
-    ):  # pylint: disable=W0613
-        """Changes the State of the device to ."""
+    def action_scan(self, model, tango_dev=None, data_input=None):
+        """Changes the obsState of the device to SCANNING"""
         obsstate_attribute = model.sim_quantities["obsState"]
         obs_state = get_enum_str(obsstate_attribute)
         if obs_state == "READY":
@@ -306,7 +295,7 @@ class OverrideSdpSubarray:
             tango_dev.set_status("ObsState in SCANNING")
             model.logger.info("ObsState trasnitioned to SCANNING")
             # create thread
-            self.logger.info("Starting thread to to execute scan.")
+            model.logger.info("Starting thread to to execute scan.")
             scan_thread = threading.Thread(
                 target=self.execute_scan(obsstate_attribute, model, tango_dev)
             )
@@ -320,10 +309,8 @@ class OverrideSdpSubarray:
             )
         return [[ResultCode.OK], ["Scan command successful on simulator."]]
 
-    def action_end(
-        self, model, tango_dev=None, data_input=None
-    ):  # pylint: disable=W0613
-        """Changes the State of the device to ."""
+    def action_end(self, model, tango_dev=None, data_input=None):
+        """Changes the obsState of the device to IDLE"""
         obsstate_attribute = model.sim_quantities["obsState"]
         obs_state = get_enum_str(obsstate_attribute)
         if obs_state == "READY":
@@ -345,10 +332,8 @@ class OverrideSdpSubarray:
             )
         return [[ResultCode.OK], ["End command successfull on simulator."]]
 
-    def action_restart(
-        self, model, tango_dev=None, data_input=None
-    ):  # pylint: disable=W0613
-        """Changes the State of the device to ."""
+    def action_restart(self, model, tango_dev=None, data_input=None):
+        """Simulates Restart command on SDP Subarray"""
         obsstate_attribute = model.sim_quantities["obsState"]
         obs_state = get_enum_str(obsstate_attribute)
         if obs_state == "ABORTED":
@@ -380,10 +365,8 @@ class OverrideSdpSubarray:
             )
         return [[ResultCode.OK], ["Restart command successful on simulator."]]
 
-    def action_obsreset(
-        self, model, tango_dev=None, data_input=None
-    ):  # pylint: disable=W0613
-        """Changes the State of the device to ."""
+    def action_obsreset(self, model, tango_dev=None, data_input=None):
+        """Changes the obsState of the device to IDLE"""
         obsstate_attribute = model.sim_quantities["obsState"]
         obs_state = get_enum_str(obsstate_attribute)
         if obs_state == "ABORTED":
@@ -416,6 +399,7 @@ class OverrideSdpSubarray:
         return [[ResultCode.OK], ["ObsReset command successful on simulator."]]
 
     def execute_scan(self, obsstate_attribute, model, tango_dev):
+        """Simulates Scan command on SDP Subarray"""
         time.sleep(10)
         set_enum(obsstate_attribute, "READY", model.time_func())
         sdp_subarray_obs_state_enum = get_enum_int(obsstate_attribute, "READY")
