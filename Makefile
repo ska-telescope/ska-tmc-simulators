@@ -90,6 +90,7 @@ TEST_RUNNER = test-runner-$(CI_JOB_ID)-$(KUBE_NAMESPACE)-$(HELM_RELEASE)
 -include .make/python.mk
 -include .make/release.mk
 -include .make/test.mk
+-include .make/help.mk
 
 #
 # Defines a default make target so that help is printed if make is called
