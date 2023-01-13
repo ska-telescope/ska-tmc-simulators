@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # Standard python import
+"""Csp Subarray Module"""
 import sys
 
 from tango.server import run
@@ -11,6 +12,7 @@ from .utils import get_tango_server_class
 
 
 def get_csp_subarray_simulator():
+    """Returns CSP Subarray Simulator"""
     if len(sys.argv) > 0:
         device_name = sys.argv[1]
         if device_name.isdigit():

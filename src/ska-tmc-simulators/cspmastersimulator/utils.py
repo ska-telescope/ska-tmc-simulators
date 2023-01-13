@@ -1,3 +1,4 @@
+"""Utils module"""
 import logging
 
 import pkg_resources
@@ -45,6 +46,8 @@ def get_tango_server_class(device_name):
     device_name_tag = f"tango-device:{device_name}"
 
     class TangoDeviceTagsFilter(logging.Filter):
+        """Tango device tags class"""
+
         def filter(self, record):
             record.tags = device_name_tag
             return True
