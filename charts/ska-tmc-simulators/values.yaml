@@ -4,7 +4,7 @@ xauthority: "~/.Xauthority"
 enabled: true
 
 system: TMC-simulators
-telescope: SKA-TMC-SIMULATORS
+telescope: SKA-mid
 subsystem: ska-tmc-simulators
 
 labels:
