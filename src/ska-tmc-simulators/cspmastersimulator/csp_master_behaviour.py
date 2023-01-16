@@ -1,23 +1,22 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=W0613
 """
 override class with command handlers for CspMaster.
 """
 # Standard python imports
 import enum
 
-# Tango import
-from tango import DevState, Except, ErrSeverity, DeviceProxy
-
 # SKA imports
-from ska.base.commands import ResultCode
+from ska_tango_base.commands import ResultCode
+
+# Tango import
+from tango import DeviceProxy, DevState, ErrSeverity, Except
 
 
 class OverrideCspMaster:
     """Class for csp master simulator device"""
 
-    def action_on(
-        self, model, tango_dev=None, data_input=None
-    ):  # pylint: disable=W0613
+    def action_on(self, model, tango_dev=None, data_input=None):
         """Changes the State of the device to ON."""
         model.logger.info("Executing On command")
         _allowed_modes = (DevState.OFF, DevState.STANDBY)
@@ -53,14 +52,16 @@ class OverrideCspMaster:
                 "Not allowed",
                 ErrSeverity.WARN,
             )
-        return [[ResultCode.OK], ["ON command invoked successfully on simulator."]]
+        return [
+            [ResultCode.OK],
+            ["ON command invoked successfully on simulator."],
+        ]
 
     def command_callback_method(self, model):
+        """Simulates the callback method"""
         model.logger.info("command callback for async command executed.")
 
-    def action_off(
-        self, model, tango_dev=None, data_input=None
-    ):  # pylint: disable=W0613
+    def action_off(self, model, tango_dev=None, data_input=None):
         """Changes the State of the device to OFF."""
         _allowed_modes = (DevState.ON, DevState.ALARM, DevState.STANDBY)
         if tango_dev.get_state() == DevState.OFF:
@@ -89,27 +90,32 @@ class OverrideCspMaster:
                 "Not allowed",
                 ErrSeverity.WARN,
             )
-        return [[ResultCode.OK], ["OFF command invoked successfully on simulator."]]
+        return [
+            [ResultCode.OK],
+            ["OFF command invoked successfully on simulator."],
+        ]
 
     def action_cspmasterfault(self, model, tango_dev=None, data_input=None):
+        """Sets the device state to Fault"""
         tango_dev.set_state(DevState.FAULT)
         tango_dev.push_change_event("State", tango_dev.get_state())
 
-    def action_reset(self, model, tango_dev=None, data_input=None
-    ):
+    def action_reset(self, model, tango_dev=None, data_input=None):
+        """Sets the device state back to Off"""
         if tango_dev.get_state() == DevState.FAULT:
             tango_dev.set_state(DevState.OFF)
             tango_dev.push_change_event("State", tango_dev.get_state())
             model.logger.info("Reset command successful on simulator.")
 
-    def action_standby(
-        self, model, tango_dev=None, data_input=None
-    ):  # pylint: disable=W0613
+    def action_standby(self, model, tango_dev=None, data_input=None):
         """Changes the State of the device to STANDBY."""
         _allowed_modes = (DevState.ALARM, DevState.OFF, DevState.ON)
         if tango_dev.get_state() == DevState.STANDBY:
             model.logger.info("CSP master is already in Standby state")
-            return [[ResultCode.OK], ["CSP master is already in Standby state"]]
+            return [
+                [ResultCode.OK],
+                ["CSP master is already in Standby state"],
+            ]
 
         if tango_dev.get_state() in _allowed_modes:
             # Turn off CSP Subarrays
@@ -132,7 +138,10 @@ class OverrideCspMaster:
                 "Not allowed",
                 ErrSeverity.WARN,
             )
-        return [[ResultCode.OK], ["STANDBY command invoked successfully on simulator."]]
+        return [
+            [ResultCode.OK],
+            ["STANDBY command invoked successfully on simulator."],
+        ]
 
 
 def get_enum_str(quantity):
@@ -143,8 +152,10 @@ def get_enum_str(quantity):
     :return: str
         Current string value of a DevEnum attribute
     """
-    EnumClass = enum.IntEnum("EnumLabels", quantity.meta["enum_labels"], start=0)
-    return EnumClass(quantity.last_val).name
+    enumclass = enum.IntEnum(
+        "EnumLabels", quantity.meta["enum_labels"], start=0
+    )
+    return enumclass(quantity.last_val).name
 
 
 def set_enum(quantity, label, timestamp):

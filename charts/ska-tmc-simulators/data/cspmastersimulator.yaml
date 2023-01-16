@@ -10,7 +10,7 @@ server:
       classes:
         - name: "CspMasterSimulator"
           devices:
-            - name: "mid_csp/elt/master"
+            - name: "mid-csp/control/0"
               properties:
                 - name: "LoggingTargetsDefault"
                   values:
@@ -36,4 +36,3 @@ image:
   image: "{{.Values.global.tmcsim.image}}"
   tag: "{{.Values.global.tmcsim.tag}}"
   pullPolicy: "{{.Values.global.tmcsim.pullPolicy}}"
-    

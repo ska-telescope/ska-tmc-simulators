@@ -42,10 +42,7 @@ load-plugins=
 # --enable=similarities". If you want to run only the classes checker, but have
 # no Warning level messages displayed, use"--disable=all --enable=classes
 # --disable=W"
-disable=C,R,attribute-defined-outside-init,invalid-name,no-member,no-self-use,
-        fixme,broad-except,redefined-builtin,protected-access,arguments-differ,
-        signature-differs,raise-missing-from,import-error,unused-argument
-
+disable=invalid-name,broad-except,redefined-builtin,protected-access,unrecognized-option,R0801
 
 [REPORTS]
 
@@ -274,7 +271,7 @@ max-parents=7
 max-attributes=20
 
 # Minimum number of public methods for a class (see R0903).
-min-public-methods=2
+min-public-methods=1
 
 # Maximum number of public methods for a class (see R0904).
 max-public-methods=40

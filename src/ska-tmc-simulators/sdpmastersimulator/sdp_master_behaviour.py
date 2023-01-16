@@ -7,20 +7,21 @@
 # Distributed under the terms of the BSD-3-Clause license.
 # See LICENSE.txt for more info.
 
+# SKA imports
+"""Sdp Master Behavior Module"""
+# pylint: disable=W0613
+from ska_tango_base.commands import ResultCode
+
 # Standard Python imports
 # Tango imports
-from tango import DevState, Except, ErrSeverity
-
-# SKA imports
-from ska.base.commands import ResultCode
+from tango import DevState, ErrSeverity, Except
 
 
 class OverrideSdpMaster:
     """Class for sdp master simulator device"""
 
-    def action_on(
-        self, model, tango_dev=None, data_input=None
-    ):  # pylint: disable=W0613
+    def action_on(self, model, tango_dev=None, data_input=None):
+        """Sets the device state to On"""
         model.logger.info("Executing On command")
         _allowed_modes = (DevState.OFF, DevState.STANDBY)
         if tango_dev.get_state() == DevState.ON:
@@ -47,11 +48,13 @@ class OverrideSdpMaster:
                 "Not allowed",
                 ErrSeverity.WARN,
             )
-        return [[ResultCode.OK], ["ON command invoked successfully on simulator."]]
+        return [
+            [ResultCode.OK],
+            ["ON command invoked successfully on simulator."],
+        ]
 
-    def action_off(
-        self, model, tango_dev=None, data_input=None
-    ):  # pylint: disable=W0613
+    def action_off(self, model, tango_dev=None, data_input=None):
+        """Sets the device state to Off"""
         _allowed_modes = (DevState.ON, DevState.ALARM, DevState.STANDBY)
         if tango_dev.get_state() == DevState.OFF:
             model.logger.info("SDP master is already in OFF state")
@@ -71,26 +74,32 @@ class OverrideSdpMaster:
                 "Not allowed",
                 ErrSeverity.WARN,
             )
-        return [[ResultCode.OK], ["OFF command invoked successfully on simulator."]]
+        return [
+            [ResultCode.OK],
+            ["OFF command invoked successfully on simulator."],
+        ]
 
     def action_sdpmasterfault(self, model, tango_dev=None, data_input=None):
+        """Sets the device state to Fault"""
         tango_dev.set_state(DevState.FAULT)
         tango_dev.push_change_event("State", tango_dev.get_state())
 
-    def action_reset(self, model, tango_dev=None, data_input=None
-    ):
+    def action_reset(self, model, tango_dev=None, data_input=None):
+        """Sets the device state to Off if in Fault"""
         if tango_dev.get_state() == DevState.FAULT:
             tango_dev.set_state(DevState.OFF)
             tango_dev.push_change_event("State", tango_dev.get_state())
             model.logger.info("Reset command successful on simulator.")
 
-    def action_standby(
-        self, model, tango_dev=None, data_input=None
-    ):  # pylint: disable=W0613
+    def action_standby(self, model, tango_dev=None, data_input=None):
+        """Sets the device state to Standby"""
         _allowed_modes = (DevState.ON, DevState.ALARM, DevState.OFF)
         if tango_dev.get_state() == DevState.STANDBY:
             model.logger.info("SDP master is already in STANDBY state")
-            return [[ResultCode.OK], ["SDP master is already in STANDBY state"]]
+            return [
+                [ResultCode.OK],
+                ["SDP master is already in STANDBY state"],
+            ]
 
         if tango_dev.get_state() in _allowed_modes:
             # Set device state
@@ -105,7 +114,12 @@ class OverrideSdpMaster:
                 "Not allowed",
                 ErrSeverity.WARN,
             )
-            
+        return [
+            [ResultCode.FAILED],
+            ["Standby command successfully invoked"],
+        ]
+
+
 def set_enum(quantity, label, timestamp):
     """Sets the quantity last_val attribute to index of label
 

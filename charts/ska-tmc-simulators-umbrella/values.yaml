@@ -2,7 +2,7 @@ display: ":0"
 xauthority: "~/.Xauthority"
 
 global:
-  retry: 
+  retry:
   - "--sleep=1"
   - "--tries=100"
   sub-system:
@@ -19,13 +19,13 @@ global:
     image:
       registry: artefact.skao.int
       image: ska-tango-images-tango-dsconfig
-      tag: 1.5.1
+      tag: 1.5.5
       pullPolicy: IfNotPresent
   itango:
     image:
       registry: artefact.skao.int
       image: ska-tango-images-tango-itango
-      tag: 9.3.5
+      tag: 9.3.9
       pullPolicy: IfNotPresent
 
 ska-tango-base:
@@ -38,19 +38,18 @@ ska-tango-base:
     replicas: 1
   tangodb:
     use_pv: false
-  
-# tm-simulator
+
+# tmc-simulator
 ska-tmc-simulators:
   deviceServers:
     cspmastersimulator:
       enabled: true
-     
+
     sdpmastersimulator:
       enabled: true
-     
+
     cspsubarraysimulator:
       enabled: true
-    
+
     sdpsubarraysimulator:
       enabled: true
-  

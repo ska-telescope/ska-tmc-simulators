@@ -1,14 +1,27 @@
-FROM artefact.skao.int/ska-tango-images-pytango-builder:9.3.10 AS buildenv
-FROM artefact.skao.int/ska-tango-images-pytango-runtime:9.3.10 AS runtime
-# create ipython profile to so that itango doesn't fail if ipython hasn't run yet
-RUN ipython profile create
+ARG BUILD_IMAGE="artefact.skao.int/ska-tango-images-pytango-builder:9.3.32"
+ARG BASE_IMAGE="artefact.skao.int/ska-tango-images-pytango-runtime:9.3.19"
+FROM $BUILD_IMAGE AS buildenv
 
+FROM $BASE_IMAGE
+
+# Install Poetry
 USER root
 
-# install all local TMC packages
-RUN python3 -m pip install -r requirements.txt \
-    /app
+ENV SETUPTOOLS_USE_DISTUTILS=stdlib
+
+RUN curl -sSL https://install.python-poetry.org | python3 - && \
+    poetry config virtualenvs.create false
+
+WORKDIR /app
+
+COPY --chown=tango:tango . /app
+
+# Install runtime dependencies and the app
+RUN poetry install --only main
+
+RUN rm /usr/bin/python && ln -s /usr/bin/python3 /usr/bin/python
 
 USER tango
 
-CMD ["/usr/local/bin/CspSubarraySimulatorDS"]
+# create ipython profile too so that itango doesn't fail if ipython hasn't run yet
+RUN ipython profile create
