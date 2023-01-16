@@ -14,33 +14,13 @@
 #
 
 autodoc_mock_imports = [
-    "astropy",
-    "backoff",
     "fire",
-    "jsonschema",
-    "numpy",
-    "pyfabil",
-    "scipy",
     "ska_tango_base",
     "tango",
-    "uritools",
     "yaml",
-    "tango",
-    "tango.server",
-    "run",
     "DeviceMeta",
     "command",
-    "future",
-    "future.utils",
-    "numpy",
     "marshmallow",
-    "ska_tmc_cdm",
-    "CODEC",
-    "ValidationError",
-    "ska_telmodel",
-    "ska_ser_skuid",
-    "transitions",
-    "ska_tmc_common",
     "ska_ser_log_transactions"
 ]
 

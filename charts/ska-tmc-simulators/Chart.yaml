@@ -6,10 +6,10 @@ version: 0.0.1
 appVersion: 1.16.0
 icon: https://www.skatelescope.org/wp-content/uploads/2016/07/09545_NEW_LOGO_2014.png
 maintainers:
-  - name: Akash Karangale
-    email: akashk.ska@gmail.com
-  - name: Rushikesh Kulkarni
-    email: rushikesh.ska@gmail.com
+  - name: Aditya Dange
+    email: adityadange.ska@gmail.com
+  - name: Bhushan Parakh
+    email: bhushan.ska@gmail.com
   - name: Jayant Kumbhar
     email: jayant.ska@gmail.com
 dependencies:
