@@ -6,7 +6,6 @@ override class with command handlers for SdpSubarray.
 # Standard python imports
 import enum
 import json
-import logging
 import threading
 import time
 

@@ -2,7 +2,6 @@
 """Csp Subarray Behavior Module"""
 # pylint: disable=W0613
 import enum
-import logging
 import threading
 import time
 
