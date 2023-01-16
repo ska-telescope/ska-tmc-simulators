@@ -16,8 +16,6 @@ from ska_tango_base.commands import ResultCode
 # Tango import
 from tango import DevState, ErrSeverity, Except
 
-MODULE_LOGGER = logging.getLogger(__name__)
-
 
 class OverrideSdpSubarray:
     """Class for sdp subarray simulator device"""
