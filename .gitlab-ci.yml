@@ -39,9 +39,9 @@ tmc-simulators_uninstall:
   before_script:
     - kubectl get namespace
   script:
-    - make uninstall-chart
-    - make clean
-    - make delete_namespace
+    - make k9s-uninstall-chart
+    - make k8s-clean
+    - make k8s-delete-namespace
   environment:
     name: test/$CI_COMMIT_REF_SLUG
     kubernetes:
