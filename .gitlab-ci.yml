@@ -24,31 +24,12 @@ cache:
 # It is also specified that only the master branch will be subject of this job.
 
 stages:
-  - build
-  - clean
-  - deploy
   - lint
+  - build
+  - deploy
   - publish
   - pages
 
-tmc-simulators_uninstall:
-  stage: clean
-  tags:
-    - k8srunner
-  image: $SKA_K8S_TOOLS_DEPLOY_IMAGE
-  before_script:
-    - kubectl get namespace
-  script:
-    - make k9s-uninstall-chart
-    - make k8s-clean
-    - make k8s-delete-namespace
-  environment:
-    name: test/$CI_COMMIT_REF_SLUG
-    kubernetes:
-      # This repetition is needed for gitlab to parse the namespace correctly
-      namespace: ci-$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-mid
-    action: stop
-  when: manual
 
 # Standardised included jobs
 include:
