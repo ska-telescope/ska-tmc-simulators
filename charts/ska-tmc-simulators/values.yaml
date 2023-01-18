@@ -34,6 +34,8 @@ subarray_devices:
 subarray_count: 3
 
 dsconfig:
+  configuration_file: data/configuration.json
+  timeout: 300s
   image:
     registry: artefact.skao.int
     image: ska-tango-images-tango-dsconfig
