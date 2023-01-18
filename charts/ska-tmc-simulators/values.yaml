@@ -46,7 +46,7 @@ resources:
 
 deviceServers:
   cspmastersimulator:
-    enabled: false
+    enabled: true
     instances: ["01"]
     file: "data/cspmastersimulator.yaml"
   sdpmastersimulator:
