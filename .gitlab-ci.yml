@@ -80,4 +80,5 @@ include:
 
 
 k8s-test:
+  stage: test
   script: echo "No tests to run, job succeeded"
