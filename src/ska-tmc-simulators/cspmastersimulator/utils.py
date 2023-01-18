@@ -54,10 +54,9 @@ def get_tango_server_class(device_name):
 
     # set up Python logging
     configure_logging(tags_filter=TangoDeviceTagsFilter)
-    logger_name = f"csp-master-{device_name}"
-    logger = logging.getLogger(logger_name)
     logger.info("Logging started for %s.", device_name)
     configure_args = {"logger": logger}
+
     # test/nodb/cspmaster is used for testing
     if device_name == "test/nodb/cspmaster":
         configure_args["test_device_name"] = device_name

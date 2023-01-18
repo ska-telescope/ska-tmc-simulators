@@ -377,13 +377,33 @@
             "out_type": "DevVarLongStringArray",
             "out_type_desc": "Uninitialised"
         },
-         "CspMasterFault": {
+        "CspMasterFault": {
             "cmd_name": "CspMasterFault",
             "cmd_tag": 0,
             "disp_level": "OPERATOR",
             "in_type": "DevVoid",
             "in_type_desc": "None",
             "name": "CspMasterFault",
+            "out_type": "DevVoid",
+            "out_type_desc": "Uninitialised"
+        },
+        "CspMaster_healthState_Degraded": {
+            "cmd_name": "CspMaster_healthState_Degraded",
+            "cmd_tag": 0,
+            "disp_level": "OPERATOR",
+            "in_type": "DevVoid",
+            "in_type_desc": "None",
+            "name": "CspMaster_healthState_Degraded",
+            "out_type": "DevVoid",
+            "out_type_desc": "Uninitialised"
+        },
+        "CspMaster_healthState_Fault": {
+            "cmd_name": "CspMaster_healthState_Fault",
+            "cmd_tag": 0,
+            "disp_level": "OPERATOR",
+            "in_type": "DevVoid",
+            "in_type_desc": "None",
+            "name": "CspMaster_healthState_Fault",
             "out_type": "DevVoid",
             "out_type_desc": "Uninitialised"
         },
@@ -399,12 +419,12 @@
         }
     },
     "dev_class": "CspMaster",
-    "name": "mid_csp/elt/master",
+    "name": "mid-csp/control/0",
     "properties": {
         "polled_attr": [
             "state",
             "1000"
         ]
-    }, 
+    },
     "server": "CspMaster/1"
 }

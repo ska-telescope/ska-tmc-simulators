@@ -16,7 +16,7 @@ from tango import DeviceProxy, DevState, ErrSeverity, Except
 class OverrideCspMaster:
     """Class for csp master simulator device"""
 
-    def action_on(self, model, tango_dev=None, data_input=None):
+    def action_on(self, model, tango_dev, data_input=None):
         """Changes the State of the device to ON."""
         model.logger.info("Executing On command")
         _allowed_modes = (DevState.OFF, DevState.STANDBY)
@@ -61,7 +61,7 @@ class OverrideCspMaster:
         """Simulates the callback method"""
         model.logger.info("command callback for async command executed.")
 
-    def action_off(self, model, tango_dev=None, data_input=None):
+    def action_off(self, model, tango_dev, data_input=None):
         """Changes the State of the device to OFF."""
         _allowed_modes = (DevState.ON, DevState.ALARM, DevState.STANDBY)
         if tango_dev.get_state() == DevState.OFF:
@@ -95,19 +95,35 @@ class OverrideCspMaster:
             ["OFF command invoked successfully on simulator."],
         ]
 
-    def action_cspmasterfault(self, model, tango_dev=None, data_input=None):
+    def action_cspmasterfault(self, model, tango_dev, data_input=None):
         """Sets the device state to Fault"""
         tango_dev.set_state(DevState.FAULT)
         tango_dev.push_change_event("State", tango_dev.get_state())
 
-    def action_reset(self, model, tango_dev=None, data_input=None):
+    def action_cspmaster_healthstate_degraded(self, model, tango_dev) -> None:
+        """Sets the CSP Master Health State to Degraded"""
+        csp_health_state = model.sim_quantities["healthState"]
+        set_enum(csp_health_state, "DEGRADED", model.time_func())
+        csp_health_state_enum = get_enum_int(csp_health_state, "DEGRADED")
+        tango_dev.push_change_event("healthState", csp_health_state_enum)
+        model.logger.info("heathState transitioned to DEGRADED state")
+
+    def action_cspmaster_healthstate_fault(self, model, tango_dev) -> None:
+        """Sets the CSP Master Health State to Fault"""
+        csp_health_state = model.sim_quantities["healthState"]
+        set_enum(csp_health_state, "FAULT", model.time_func())
+        csp_health_state_enum = get_enum_int(csp_health_state, "FAULT")
+        tango_dev.push_change_event("healthState", csp_health_state_enum)
+        model.logger.info("heathState transitioned to FAULT state")
+
+    def action_reset(self, model, tango_dev, data_input=None):
         """Sets the device state back to Off"""
         if tango_dev.get_state() == DevState.FAULT:
             tango_dev.set_state(DevState.OFF)
             tango_dev.push_change_event("State", tango_dev.get_state())
             model.logger.info("Reset command successful on simulator.")
 
-    def action_standby(self, model, tango_dev=None, data_input=None):
+    def action_standby(self, model, tango_dev, data_input=None):
         """Changes the State of the device to STANDBY."""
         _allowed_modes = (DevState.ALARM, DevState.OFF, DevState.ON)
         if tango_dev.get_state() == DevState.STANDBY:
