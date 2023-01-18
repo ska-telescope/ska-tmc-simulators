@@ -16,7 +16,7 @@ PROJECT = ska-tmc-simulators
 
 # KUBE_NAMESPACE defines the Kubernetes Namespace that will be deployed to
 # using Helm.  If this does not already exist it will be created
-KUBE_NAMESPACE ?= tmcmidsimulators
+KUBE_NAMESPACE ?= ska-tmc-simulators
 DASHBOARD ?= webjive-dash.dump
 
 # HELM_RELEASE is the release that all Kubernetes resources will be labelled

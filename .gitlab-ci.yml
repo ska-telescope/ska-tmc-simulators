@@ -26,6 +26,7 @@ cache:
 stages:
   - lint
   - build
+  - test
   - deploy
   - publish
   - pages
@@ -72,3 +73,11 @@ include:
   # Docs pages
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/docs.gitlab-ci.yml'
+
+  # Test stage
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/k8s.gitlab-ci.yml'
+
+
+k8s-test:
+  script: echo "No tests to run, job succeeded"

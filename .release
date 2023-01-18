@@ -1,7 +1,7 @@
 """Release information for Python Package"""
 
 name="""ska-tmc-simulators"""
-version="0.0.3"
+version="0.1.0"
 version_info=version.split(".")
 description="""TMC Simulators"""
 author="Team NCRA"
@@ -10,8 +10,8 @@ license="""BSD-3-Clause"""
 url="""https://www.skaobservatory.org"""
 copyright=""""""
 
-release=0.0.3
-tag=0.0.3
+release=0.1.0
+tag=0.1.0
 tag_description= Separate repository for simulators
 release_notes=This release contains:<br/><ul><li>Separate repository for simulators</li></ul><br/>
 gitlab_username=JayantKumbhar
