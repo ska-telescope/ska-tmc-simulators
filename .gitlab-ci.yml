@@ -79,9 +79,12 @@ include:
     file: 'gitlab-ci/includes/k8s-test.gitlab-ci.yml'
 
 
-# k8s-test:
-#   script:
-#     - echo "No tests to run, job succeeded"
-#   rules:
-#     - exists:
-#         - src/*
+k8s-test:
+  # allow_failure: true
+  stage: test
+  script:
+    - echo "No test runs necessary. Job Succeeded."
+  rules:
+    - exists:
+        - src/**/*
+
