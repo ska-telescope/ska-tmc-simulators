@@ -76,9 +76,12 @@ include:
 
   # Test stage
   - project: 'ska-telescope/templates-repository'
-    file: 'gitlab-ci/includes/k8s.gitlab-ci.yml'
+    file: 'gitlab-ci/includes/k8s-test.gitlab-ci.yml'
 
 
 k8s-test:
-  stage: test
-  script: echo "No tests to run, job succeeded"
+  script:
+    - echo "No tests to run, job succeeded"
+  rules:
+    - exists:
+        - src/*
