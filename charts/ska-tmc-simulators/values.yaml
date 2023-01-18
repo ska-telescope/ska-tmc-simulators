@@ -14,20 +14,24 @@ annotations:
   app.gitlab.com/env: CI_ENVIRONMENT_SLUG
 
 global:
-  minikube: false
+  minikube: true
   tango_host: databaseds-tango-base-test:10000
-  tmcsim:
-    registry: artefact.skao.int
-    image: ska-tmc-simulators
-    tag: 0.1.0
-    pullPolicy: IfNotPresent
+  retry:
+    - "--tries=10"
+    - "--sleep=5"
 
-  # subarray_count, this will be expanded (1 to N inclusive) and applied to instances of:
-  # deviceServers.cspsubarrayleafnode, deviceServers.sdpsubarrayleafnode, deviceServers.subarraynode
-  subarray_devices:
-    - "cspsubarraysimulator"
-    - "sdpsubarraysimulator"
-  subarray_count: 3
+tmcsim:
+  registry: artefact.skao.int
+  image: ska-tmc-simulators
+  tag: 0.1.0
+  pullPolicy: IfNotPresent
+
+# subarray_count, this will be expanded (1 to N inclusive) and applied to instances of:
+# deviceServers.cspsubarrayleafnode, deviceServers.sdpsubarrayleafnode, deviceServers.subarraynode
+subarray_devices:
+  - "cspsubarraysimulator"
+  - "sdpsubarraysimulator"
+subarray_count: 3
 
 dsconfig:
   image:
