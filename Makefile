@@ -24,18 +24,27 @@ DASHBOARD ?= webjive-dash.dump
 HELM_RELEASE ?= test
 
 # HELM_CHART the chart name
-HELM_CHART ?= ska-tmc-simulators-umbrella
+HELM_CHART = ska-tmc-simulators-umbrella
 
 # UMBRELLA_CHART_PATH Path of the umbrella chart to work with
-CHART_PATH ?= charts/ska-tmc-simulators/
-UMBRELLA_CHART_PATH ?= charts/ska-tmc-simulators-umbrella/
+UMBRELLA_CHART_PATH ?= charts/$(HELM_CHART)/
+CI_REGISTRY ?= gitlab.com
+
+K8S_CHARTS ?= ska-tmc-subarraynode test-parent## list of charts
+K8S_CHART ?= $(HELM_CHART)
+
+K8S_TEST_IMAGE_TO_TEST=$(CAR_OCI_REGISTRY_HOST)/$(PROJECT):$(VERSION)
+ifneq ($(CI_JOB_ID),)
+CUSTOM_VALUES = --set ska-tmc-simulators.tmcsim.image.image=$(PROJECT) \
+	--set ska-tmc-simulators.tmcsim.image.registry=$(CI_REGISTRY)/ska-telescope/ska-tmc/$(PROJECT) \
+	--set ska-tmc-simulators.tmcsim.image.tag=$(VERSION)
+
+K8S_TEST_IMAGE_TO_TEST=$(CI_REGISTRY)/ska-telescope/ska-tmc/$(PROJECT)/$(PROJECT):$(VERSION)
+endif
+
 # Fixed variables
 # Timeout for gitlab-runner when run locally
 TIMEOUT = 86400
-# Helm version
-HELM_VERSION = v3.3.1
-# kubectl version
-KUBERNETES_VERSION = v1.19.2
 
 # Docker, K8s and Gitlab CI variables
 # gitlab-runner debug mode - turn on with non-empty value
@@ -49,18 +58,8 @@ DOCKER_VOLUMES ?= /var/run/docker.sock:/var/run/docker.sock
 # registry credentials - user/pass/registry - set these in PrivateRules.mak
 DOCKER_REGISTRY_USER_LOGIN ?=  ## registry credentials - user - set in PrivateRules.mak
 CI_REGISTRY_PASS_LOGIN ?=  ## registry credentials - pass - set in PrivateRules.mak
-CI_REGISTRY ?= gitlab.com
 
 CI_PROJECT_DIR ?= .
-
-K8S_TEST_IMAGE_TO_TEST=$(CAR_OCI_REGISTRY_HOST)/$(PROJECT):$(VERSION)
-ifneq ($(CI_JOB_ID),)
-CUSTOM_VALUES = --set ska-tmc-simulators.tmcsim.image.image=$(PROJECT) \
-	--set ska-tmc-simulators.tmcsim.image.registry=$(CI_REGISTRY)/ska-telescope/ska-tmc/$(PROJECT) \
-	--set ska-tmc-simulators.tmcsim.image.tag=$(VERSION)
-
-K8S_TEST_IMAGE_TO_TEST=$(CI_REGISTRY)/ska-telescope/ska-tmc/$(PROJECT)/$(PROJECT):$(VERSION)
-endif
 
 KUBE_CONFIG_BASE64 ?=  ## base64 encoded kubectl credentials for KUBECONFIG
 KUBECONFIG ?= /etc/deploy/config ## KUBECONFIG location
