@@ -30,7 +30,7 @@ HELM_CHART = ska-tmc-simulators-umbrella
 UMBRELLA_CHART_PATH ?= charts/$(HELM_CHART)/
 CI_REGISTRY ?= gitlab.com
 
-K8S_CHARTS ?= ska-tmc-subarraynode test-parent## list of charts
+K8S_CHARTS ?= ska-tmc-simulators ska-tmc-simulators-umbrella## list of charts
 K8S_CHART ?= $(HELM_CHART)
 
 K8S_TEST_IMAGE_TO_TEST=$(CAR_OCI_REGISTRY_HOST)/$(PROJECT):$(VERSION)
