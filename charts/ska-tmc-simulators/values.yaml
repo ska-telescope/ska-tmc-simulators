@@ -23,7 +23,7 @@ global:
 tmcsim:
   registry: artefact.skao.int/ska-telescope
   image: ska-tmc-simulators
-  tag: 0.0.3
+  tag: 0.1.0
   pullPolicy: IfNotPresent
 
 # subarray_count, this will be expanded (1 to N inclusive) and applied to instances of:

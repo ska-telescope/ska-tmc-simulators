@@ -53,6 +53,15 @@ CI_REGISTRY ?= gitlab.com/ska-telescope/ska-tmc-simulators
 
 CI_PROJECT_DIR ?= .
 
+K8S_TEST_IMAGE_TO_TEST=$(CAR_OCI_REGISTRY_HOST)/$(PROJECT):$(VERSION)
+ifneq ($(CI_JOB_ID),)
+CUSTOM_VALUES = --set ska-tmc-simulators.tmcsim.image.image=$(PROJECT) \
+	--set ska-tmc-simulators.tmcsim.image.registry=$(CI_REGISTRY)/ska-telescope/$(PROJECT) \
+	--set ska-tmc-simulators.tmcsim.image.tag=$(VERSION)-dev.c$(CI_COMMIT_SHORT_SHA)
+
+K8S_TEST_IMAGE_TO_TEST=$(CI_REGISTRY)/ska-telescope/$(PROJECT)/$(PROJECT):$(VERSION)-dev.c$(CI_COMMIT_SHORT_SHA)
+endif
+
 KUBE_CONFIG_BASE64 ?=  ## base64 encoded kubectl credentials for KUBECONFIG
 KUBECONFIG ?= /etc/deploy/config ## KUBECONFIG location
 
