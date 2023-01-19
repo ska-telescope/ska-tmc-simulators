@@ -11,7 +11,6 @@
 # artefact.skao.int/ska-telescope/ska-tmc
 #
 CAR_OCI_REGISTRY_HOST:=artefact.skao.int
-CI_REGISTRY_IMAGE=registry.gitlab.com/ska-telescope/ska-tmc/ska-tmc-simulators
 CAR_OCI_REGISTRY_USER:=ska-telescope
 PROJECT = ska-tmc-simulators
 
@@ -29,19 +28,14 @@ HELM_CHART = ska-tmc-simulators-umbrella
 
 # UMBRELLA_CHART_PATH Path of the umbrella chart to work with
 UMBRELLA_CHART_PATH ?= charts/$(HELM_CHART)/
-CI_REGISTRY ?= gitlab.com
+CI_REGISTRY ?= registry.gitlab.com
 
 K8S_CHARTS ?= ska-tmc-simulators ska-tmc-simulators-umbrella## list of charts
 K8S_CHART ?= $(HELM_CHART)
 
-K8S_TEST_IMAGE_TO_TEST=$(CAR_OCI_REGISTRY_HOST)/$(PROJECT):$(VERSION)
-ifneq ($(CI_JOB_ID),)
 CUSTOM_VALUES = --set ska-tmc-simulators.tmcsim.image.image=$(PROJECT) \
 	--set ska-tmc-simulators.tmcsim.image.registry=$(CI_REGISTRY)/ska-telescope/ska-tmc/$(PROJECT) \
 	--set ska-tmc-simulators.tmcsim.image.tag=$(VERSION)-dev.c$(CI_COMMIT_SHORT_SHA)
-
-K8S_TEST_IMAGE_TO_TEST=$(CI_REGISTRY)/ska-telescope/ska-tmc/$(PROJECT)/$(PROJECT):$(VERSION)-dev.c$(CI_COMMIT_SHORT_SHA)
-endif
 
 # Fixed variables
 # Timeout for gitlab-runner when run locally
@@ -66,9 +60,6 @@ KUBE_CONFIG_BASE64 ?=  ## base64 encoded kubectl credentials for KUBECONFIG
 KUBECONFIG ?= /etc/deploy/config ## KUBECONFIG location
 
 PYTHON_LINT_TARGET = src/
-
-#VALUES_FILE ?= charts/ska-tmc-mid/values.yaml
-CUSTOM_VALUES =
 
 ifneq ($(CI_JOB_ID),)
 CI_PROJECT_IMAGE :=
