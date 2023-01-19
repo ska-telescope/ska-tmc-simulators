@@ -46,10 +46,10 @@ ska-tmc-simulators:
       enabled: true
 
     sdpmastersimulator:
-      enabled: true
+      enabled: false
 
     cspsubarraysimulator:
-      enabled: true
+      enabled: false
 
     sdpsubarraysimulator:
-      enabled: true
+      enabled: false
