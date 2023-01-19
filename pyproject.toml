@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ska-tmc-simulators"
-version = "0.1.0"
+version = "0.0.4"
 description = "SKA-TMC-SIMULATORS"
 authors = ["Team HIMALAYA" , "Team SAHYADRI"]
 license = "BSD-3-Clause"
