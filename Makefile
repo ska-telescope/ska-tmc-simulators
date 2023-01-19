@@ -33,7 +33,7 @@ CI_REGISTRY ?= gitlab.com
 K8S_CHARTS ?= ska-tmc-simulators ska-tmc-simulators-umbrella## list of charts
 K8S_CHART ?= $(HELM_CHART)
 
-K8S_TEST_IMAGE_TO_TEST=$(CAR_OCI_REGISTRY_HOST)/$(PROJECT):$(VERSION)
+K8S_TEST_IMAGE_TO_TEST=$(CI_REGISTRY)/$(PROJECT):$(VERSION)
 ifneq ($(CI_JOB_ID),)
 CUSTOM_VALUES = --set ska-tmc-simulators.tmcsim.image.image=$(PROJECT) \
 	--set ska-tmc-simulators.tmcsim.image.registry=$(CI_REGISTRY)/ska-telescope/ska-tmc/$(PROJECT) \
