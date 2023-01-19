@@ -10,7 +10,8 @@
 # CAR_OCI_REGISTRY_USER and PROJECT to give a final Docker tag of
 # artefact.skao.int/ska-telescope/ska-tmc
 #
-CAR_OCI_REGISTRY_HOST:=registry.gitlab.com/ska-telescope/ska-tmc/ska-tmc-simulators
+CAR_OCI_REGISTRY_HOST:=artefact.skao.int
+CI_REGISTRY_IMAGE=registry.gitlab.com/ska-telescope/ska-tmc/ska-tmc-simulators
 CAR_OCI_REGISTRY_USER:=ska-telescope
 PROJECT = ska-tmc-simulators
 
