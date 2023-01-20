@@ -325,7 +325,7 @@
         "State": {
             "cmd_name": "State",
             "cmd_tag": 0,
-            "device": "mid_csp/elt/master",
+            "device": "mid-csp/control/0",
             "disp_level": "OPERATOR",
             "in_type": "DevVoid",
             "in_type_desc": "Uninitialised",
@@ -336,7 +336,7 @@
         "Status": {
             "cmd_name": "Status",
             "cmd_tag": 0,
-            "device": "mid_csp/elt/master",
+            "device": "mid-csp/control/0",
             "disp_level": "OPERATOR",
             "in_type": "DevVoid",
             "in_type_desc": "Uninitialised",
@@ -347,7 +347,7 @@
         "On": {
             "cmd_name": "On",
             "cmd_tag": 0,
-            "device": "mid_csp/elt/master",
+            "device": "mid-csp/control/0",
             "disp_level": "OPERATOR",
             "in_type": "DevVarStringArray",
             "in_type_desc": "None",
@@ -358,7 +358,7 @@
         "Off": {
             "cmd_name": "Off",
             "cmd_tag": 0,
-            "device": "mid_csp/elt/master",
+            "device": "mid-csp/control/0",
             "disp_level": "OPERATOR",
             "in_type": "DevVarStringArray",
             "in_type_desc": "None",
@@ -369,7 +369,7 @@
         "Standby": {
             "cmd_name": "Standby",
             "cmd_tag": 0,
-            "device": "mid_csp/elt/master",
+            "device": "mid-csp/control/0",
             "disp_level": "OPERATOR",
             "in_type": "DevVarStringArray",
             "in_type_desc": "None",

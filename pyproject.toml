@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ska-tmc-simulators"
-version = "0.0.4"
+version = "0.0.5"
 description = "SKA-TMC-SIMULATORS"
 authors = ["Team HIMALAYA" , "Team SAHYADRI"]
 license = "BSD-3-Clause"
@@ -13,10 +13,10 @@ packages = [
 ]
 
 [tool.poetry.scripts]
-CspSubarraySimulatorDS="ska_tmc_simulators.cspsubarraysimulator.csp_subarray:main"
-SdpSubarraySimulatorDS="ska_tmc_simulators.sdpsubarraysimulator.sdp_subarray:main"
-CspMasterSimulatorDS="ska_tmc_simulators.cspmastersimulator.csp_master:main"
-SdpMasterSimulatorDS="ska_tmc_simulators.sdpmastersimulator.sdp_master:main"
+CspSubarraySimulatorDS="ska-tmc-simulators.cspsubarraysimulator.csp_subarray:main"
+SdpSubarraySimulatorDS="ska-tmc-simulators.sdpsubarraysimulator.sdp_subarray:main"
+CspMasterSimulatorDS="ska-tmc-simulators.cspmastersimulator.csp_master:main"
+SdpMasterSimulatorDS="ska-tmc-simulators.sdpmastersimulator.sdp_master:main"
 
 [[tool.poetry.source]]
 name = 'ska-nexus'

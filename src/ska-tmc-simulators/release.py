@@ -10,7 +10,7 @@
 """Release information for Python Package"""
 
 name = """ska_tmc_simulators"""
-version = "0.0.4"
+version = "0.0.5"
 version_info = version.split(".")
 description = """"""
 author = "Team Himalaya, Team Sahyadri"
