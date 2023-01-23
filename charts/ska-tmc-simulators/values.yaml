@@ -5,10 +5,10 @@ enabled: true
 
 system: TMC-simulators
 telescope: SKA-mid
-subsystem: ska-tmc-simulators
+subsystem: ska_tmc_simulators
 
 labels:
-  app: ska-tmc-simulators
+  app: ska_tmc_simulators
 annotations:
   app.gitlab.com/app: CI_PROJECT_PATH_SLUG
   app.gitlab.com/env: CI_ENVIRONMENT_SLUG
@@ -21,7 +21,7 @@ global:
     - "--sleep=5"
 
 tmcsim:
-  registry: artefact.skao.int/ska-telescope/ska-tmc
+  registry: artefact.skao.int
   image: ska-tmc-simulators
   tag: 0.0.5
   pullPolicy: IfNotPresent

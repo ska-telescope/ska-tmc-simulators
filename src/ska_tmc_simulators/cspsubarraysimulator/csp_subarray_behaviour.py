@@ -19,7 +19,7 @@ class OverrideCspSubarray:
     ):  # pylint: disable=W0613
         """Changes the State of the device to ON."""
         _allowed_modes = (DevState.OFF, DevState.STANDBY)
-        if tango_dev.get_state() == DevState.ON:
+        if tango_dev.get_state() is DevState.ON:
             model.logger.info("CSP Subarray is already in ON state")
             return [[ResultCode.OK], ["CSP Subarray is already in ON state"]]
 
@@ -42,7 +42,7 @@ class OverrideCspSubarray:
         """Changes the State of the device to OFF."""
         _allowed_modes = (DevState.ON, DevState.ALARM, DevState.STANDBY)
 
-        if tango_dev.get_state() == DevState.OFF:
+        if tango_dev.get_state() is DevState.OFF:
             model.logger.info("CSP Subarray is already in OFF state")
             return [[ResultCode.OK], ["CSP Subarray is already in OFF state."]]
 
@@ -68,7 +68,7 @@ class OverrideCspSubarray:
         """
         obsstate_attribute = model.sim_quantities["obsState"]
         obs_state = get_enum_str(obsstate_attribute)
-        if obs_state == "EMPTY":
+        if obs_state is "EMPTY":
             set_enum(obsstate_attribute, "RESOURCING", model.time_func())
             csp_subarray_obs_state_enum = get_enum_int(
                 obsstate_attribute, "RESOURCING"
@@ -107,7 +107,7 @@ class OverrideCspSubarray:
 
     def action_reset(self, model, tango_dev=None, data_input=None):
         """Sets the device state back to Off if in FAULT"""
-        if tango_dev.get_state() == DevState.FAULT:
+        if tango_dev.get_state() is DevState.FAULT:
             tango_dev.set_state(DevState.OFF)
             tango_dev.push_change_event("State", tango_dev.get_state())
             model.logger.info("Reset command successful on simulator.")
@@ -118,7 +118,7 @@ class OverrideCspSubarray:
         """Changes the ObsState of the device to READY from SCANNING."""
         obsstate_attribute = model.sim_quantities["obsState"]
         obs_state = get_enum_str(obsstate_attribute)
-        if obs_state == "SCANNING":
+        if obs_state is "SCANNING":
             set_enum(obsstate_attribute, "READY", model.time_func())
             csp_subarray_obs_state_enum = get_enum_int(
                 obsstate_attribute, "READY"
@@ -188,7 +188,7 @@ class OverrideCspSubarray:
         """
         obsstate_attribute = model.sim_quantities["obsState"]
         obs_state = get_enum_str(obsstate_attribute)
-        if obs_state == "IDLE":
+        if obs_state is "IDLE":
             set_enum(obsstate_attribute, "RESOURCING", model.time_func())
             csp_subarray_obs_state_enum = get_enum_int(
                 obsstate_attribute, "RESOURCING"
@@ -269,7 +269,7 @@ class OverrideCspSubarray:
         """
         obsstate_attribute = model.sim_quantities["obsState"]
         obs_state = get_enum_str(obsstate_attribute)
-        if obs_state == "READY":
+        if obs_state is "READY":
             set_enum(obsstate_attribute, "SCANNING", model.time_func())
             csp_subarray_obs_state_enum = get_enum_int(
                 obsstate_attribute, "SCANNING"
@@ -300,7 +300,7 @@ class OverrideCspSubarray:
         """Changes the ObsState of the device to IDLE from READY."""
         obsstate_attribute = model.sim_quantities["obsState"]
         obs_state = get_enum_str(obsstate_attribute)
-        if obs_state == "READY":
+        if obs_state is "READY":
             set_enum(obsstate_attribute, "IDLE", model.time_func())
             csp_subarray_obs_state_enum = get_enum_int(
                 obsstate_attribute, "IDLE"
@@ -325,7 +325,7 @@ class OverrideCspSubarray:
         """Changes the ObsState of the device to EMPTY from ABORTED."""
         obsstate_attribute = model.sim_quantities["obsState"]
         obs_state = get_enum_str(obsstate_attribute)
-        if obs_state == "ABORTED":
+        if obs_state is "ABORTED":
             set_enum(obsstate_attribute, "RESTARTING", model.time_func())
             csp_subarray_obs_state_enum = get_enum_int(
                 obsstate_attribute, "RESTARTING"
@@ -360,7 +360,7 @@ class OverrideCspSubarray:
         """Changes the ObsState of the device to IDLE from ABORTED."""
         obsstate_attribute = model.sim_quantities["obsState"]
         obs_state = get_enum_str(obsstate_attribute)
-        if obs_state == "ABORTED":
+        if obs_state is "ABORTED":
             set_enum(obsstate_attribute, "RESETTING", model.time_func())
             csp_subarray_obs_state_enum = get_enum_int(
                 obsstate_attribute, "RESETTING"

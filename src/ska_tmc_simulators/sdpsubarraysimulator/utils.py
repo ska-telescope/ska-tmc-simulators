@@ -63,7 +63,7 @@ def get_tango_server_class(device_name):
 
     configure_args = {"logger": logger}
     # test/nodb/sdpsubarray is used for testing
-    if device_name == "test/nodb/sdpsubarray":
+    if device_name is "test/nodb/sdpsubarray":
         configure_args["test_device_name"] = device_name
 
     model = configure_device_models(sim_data_files)

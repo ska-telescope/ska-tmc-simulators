@@ -59,7 +59,7 @@ def get_tango_server_class(device_name):
     logger.info("Logging started for %s.", device_name)
     configure_args = {"logger": logger}
     # test/nodb/sdpmaster is used for testing
-    if device_name == "test/nodb/sdpmaster":
+    if device_name is "test/nodb/sdpmaster":
         configure_args["test_device_name"] = device_name
 
     model = configure_device_models(sim_data_files, **configure_args)

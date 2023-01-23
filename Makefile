@@ -33,9 +33,13 @@ CI_REGISTRY ?= registry.gitlab.com
 K8S_CHARTS ?= ska-tmc-simulators ska-tmc-simulators-umbrella## list of charts
 K8S_CHART ?= $(HELM_CHART)
 
+CUSTOM_VALUES ?=
+
+ifneq ($(CI_JOB_ID),)
 CUSTOM_VALUES = --set ska-tmc-simulators.tmcsim.image=$(PROJECT) \
 	--set ska-tmc-simulators.tmcsim.registry=$(CI_REGISTRY)/ska-telescope/ska-tmc/$(PROJECT) \
 	--set ska-tmc-simulators.tmcsim.tag=$(VERSION)-dev.c$(CI_COMMIT_SHORT_SHA)
+endif
 
 K8S_CHART_PARAMS = $(CUSTOM_VALUES)
 

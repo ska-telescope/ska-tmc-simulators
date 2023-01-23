@@ -1,29 +1,29 @@
 [tool.poetry]
-name = "ska-tmc-simulators"
+name = "ska_tmc_simulators"
 version = "0.0.5"
-description = "SKA-TMC-SIMULATORS"
+description = "ska_tmc_simulators"
 authors = ["Team HIMALAYA" , "Team SAHYADRI"]
 license = "BSD-3-Clause"
 
 packages = [
-    { include = "ska-tmc-simulators/cspmastersimulator", from = "src" },
-    { include = "ska-tmc-simulators/sdpmastersimulator", from = "src" },
-    { include = "ska-tmc-simulators/cspsubarraysimulator", from = "src" },
-    { include = "ska-tmc-simulators/sdpsubarraysimulator", from = "src" },
+    { include = "ska_tmc_simulators/cspmastersimulator", from = "src" },
+    { include = "ska_tmc_simulators/sdpmastersimulator", from = "src" },
+    { include = "ska_tmc_simulators/cspsubarraysimulator", from = "src" },
+    { include = "ska_tmc_simulators/sdpsubarraysimulator", from = "src" },
 ]
 
 [tool.poetry.scripts]
-CspSubarraySimulatorDS="ska-tmc-simulators.cspsubarraysimulator.csp_subarray:main"
-SdpSubarraySimulatorDS="ska-tmc-simulators.sdpsubarraysimulator.sdp_subarray:main"
-CspMasterSimulatorDS="ska-tmc-simulators.cspmastersimulator.csp_master:main"
-SdpMasterSimulatorDS="ska-tmc-simulators.sdpmastersimulator.sdp_master:main"
+CspSubarraySimulatorDS="ska_tmc_simulators.cspsubarraysimulator.csp_subarray:main"
+SdpSubarraySimulatorDS="ska_tmc_simulators.sdpsubarraysimulator.sdp_subarray:main"
+CspMasterSimulatorDS="ska_tmc_simulators.cspmastersimulator.csp_master:main"
+SdpMasterSimulatorDS="ska_tmc_simulators.sdpmastersimulator.sdp_master:main"
 
 [[tool.poetry.source]]
 name = 'ska-nexus'
 url = 'https://artefact.skao.int/repository/pypi-internal/simple'
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.8,<3.10"
 pytango = "9.3.3"
 marshmallow = "^3.13.0"
 fire = "^0.4.0"

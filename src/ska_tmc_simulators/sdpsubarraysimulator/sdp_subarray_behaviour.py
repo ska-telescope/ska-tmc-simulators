@@ -22,7 +22,7 @@ class OverrideSdpSubarray:
     def action_on(self, model, tango_dev=None, data_input=None):
         """Changes the State of the device to ON."""
         _allowed_modes = (DevState.OFF, DevState.STANDBY)
-        if tango_dev.get_state() == DevState.ON:
+        if tango_dev.get_state() is DevState.ON:
             model.logger.info("SDP Subarray is already in ON state")
             return [[ResultCode.OK], ["SDP Subarray is already in ON state"]]
 
@@ -42,7 +42,7 @@ class OverrideSdpSubarray:
     def action_off(self, model, tango_dev=None, data_input=None):
         """Changes the State of the device to OFF."""
         _allowed_modes = (DevState.ON, DevState.STANDBY, DevState.ALARM)
-        if tango_dev.get_state() == DevState.OFF:
+        if tango_dev.get_state() is DevState.OFF:
             model.logger.info("SDP Subarray is already in OFF state")
             return [[ResultCode.OK], ["SDP Subarray is already in OFF state"]]
 
@@ -64,7 +64,7 @@ class OverrideSdpSubarray:
         """Changes the State of the device to IDLE"""
         obsstate_attribute = model.sim_quantities["obsState"]
         obs_state = get_enum_str(obsstate_attribute)
-        if obs_state == "EMPTY":
+        if obs_state is "EMPTY":
             set_enum(obsstate_attribute, "RESOURCING", model.time_func())
             sdp_subarray_obs_state_enum = get_enum_int(
                 obsstate_attribute, "RESOURCING"
@@ -136,7 +136,7 @@ class OverrideSdpSubarray:
 
     def action_reset(self, model, tango_dev=None, data_input=None):
         """Changes the State of the device to Off if in Fault"""
-        if tango_dev.get_state() == DevState.FAULT:
+        if tango_dev.get_state() is DevState.FAULT:
             tango_dev.set_state(DevState.OFF)
             tango_dev.push_change_event("State", tango_dev.get_state())
             model.logger.info("Reset command successful on simulator.")
@@ -145,7 +145,7 @@ class OverrideSdpSubarray:
         """Changes the obsState of the device to READY"""
         obsstate_attribute = model.sim_quantities["obsState"]
         obs_state = get_enum_str(obsstate_attribute)
-        if obs_state == "SCANNING":
+        if obs_state is "SCANNING":
             set_enum(obsstate_attribute, "READY", model.time_func())
             sdp_subarray_obs_state_enum = get_enum_int(
                 obsstate_attribute, "READY"
@@ -207,7 +207,7 @@ class OverrideSdpSubarray:
         """Changes the obsState of the device to EMPTY"""
         obsstate_attribute = model.sim_quantities["obsState"]
         obs_state = get_enum_str(obsstate_attribute)
-        if obs_state == "IDLE":
+        if obs_state is "IDLE":
             set_enum(obsstate_attribute, "RESOURCING", model.time_func())
             sdp_subarray_obs_state_enum = get_enum_int(
                 obsstate_attribute, "RESOURCING"
@@ -281,7 +281,7 @@ class OverrideSdpSubarray:
         """Changes the obsState of the device to SCANNING"""
         obsstate_attribute = model.sim_quantities["obsState"]
         obs_state = get_enum_str(obsstate_attribute)
-        if obs_state == "READY":
+        if obs_state is "READY":
             set_enum(obsstate_attribute, "SCANNING", model.time_func())
             sdp_subarray_obs_state_enum = get_enum_int(
                 obsstate_attribute, "SCANNING"
@@ -310,7 +310,7 @@ class OverrideSdpSubarray:
         """Changes the obsState of the device to IDLE"""
         obsstate_attribute = model.sim_quantities["obsState"]
         obs_state = get_enum_str(obsstate_attribute)
-        if obs_state == "READY":
+        if obs_state is "READY":
             set_enum(obsstate_attribute, "IDLE", model.time_func())
             sdp_subarray_obs_state_enum = get_enum_int(
                 obsstate_attribute, "IDLE"
@@ -333,7 +333,7 @@ class OverrideSdpSubarray:
         """Simulates Restart command on SDP Subarray"""
         obsstate_attribute = model.sim_quantities["obsState"]
         obs_state = get_enum_str(obsstate_attribute)
-        if obs_state == "ABORTED":
+        if obs_state is "ABORTED":
             set_enum(obsstate_attribute, "RESTARTING", model.time_func())
             sdp_subarray_obs_state_enum = get_enum_int(
                 obsstate_attribute, "RESTARTING"
@@ -366,7 +366,7 @@ class OverrideSdpSubarray:
         """Changes the obsState of the device to IDLE"""
         obsstate_attribute = model.sim_quantities["obsState"]
         obs_state = get_enum_str(obsstate_attribute)
-        if obs_state == "ABORTED":
+        if obs_state is "ABORTED":
             set_enum(obsstate_attribute, "RESETTING", model.time_func())
             sdp_subarray_obs_state_enum = get_enum_int(
                 obsstate_attribute, "RESETTING"

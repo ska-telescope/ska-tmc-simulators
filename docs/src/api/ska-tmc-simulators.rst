@@ -7,8 +7,8 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   ska-tmc-simulators.cspmastersimulator
-   ska-tmc-simulators.sdpmastersimulator
-   ska-tmc-simulators.cspsubarraysimulator
-   ska-tmc-simulators.sdpsubarraysimulator
+   ska_tmc_simulators.cspmastersimulator
+   ska_tmc_simulators.sdpmastersimulator
+   ska_tmc_simulators.cspsubarraysimulator
+   ska_tmc_simulators.sdpsubarraysimulator
 

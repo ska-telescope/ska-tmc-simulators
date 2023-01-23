@@ -4,4 +4,4 @@ API
 .. toctree::
    :maxdepth: 4
 
-   ska-tmc-simulators
+   ska_tmc_simulators
