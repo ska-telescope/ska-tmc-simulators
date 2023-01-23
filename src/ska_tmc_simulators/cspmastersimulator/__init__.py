@@ -11,6 +11,3 @@
 
 SKA CspMaster TANGO device server
 """
-from . import csp_master, csp_master_behaviour, utils
-
-__all__ = ["csp_master", "csp_master_behaviour", "utils"]

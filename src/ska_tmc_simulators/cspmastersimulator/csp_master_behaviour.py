@@ -4,198 +4,188 @@
 override class with command handlers for CspMaster.
 """
 # Standard python imports
-import enum
+import logging
+from typing import Optional
 
-# SKA imports
+from ska_tango_base.base.base_device import SKABaseDevice
+from ska_tango_base.base.component_manager import BaseComponentManager
 from ska_tango_base.commands import ResultCode
+from ska_tango_base.control_model import HealthState
+from tango import DevState
+from tango.server import command, device_property, run
 
-# Tango import
-from tango import DeviceProxy, DevState, ErrSeverity, Except
+logger = logging.getLogger(__name__)
 
 
-class OverrideCspMaster:
+class EmptyComponentManager(BaseComponentManager):
+    def __init__(
+        self, logger=None, max_workers: Optional[int] = None, *args, **kwargs
+    ):
+        super().__init__(
+            logger=logger, max_workers=max_workers, *args, **kwargs
+        )
+        self._csp_master_fqdn = ""
+
+    @property
+    def csp_master_fqdn(self):
+        return self._csp_master_fqdn
+
+    @csp_master_fqdn.setter
+    def csp_master_fqdn(self, value):
+        self._csp_master_fqdn = value
+
+    def start_communicating(self):
+        """This method is not used by TMC."""
+        self.logger.info("Start communicating method called")
+        pass
+
+    def stop_communicating(self):
+        """This method is not used by TMC."""
+        self.logger.info("Stop communicating method called")
+        pass
+
+
+class CspMasterDevice(SKABaseDevice):
     """Class for csp master simulator device"""
 
-    def action_on(self, model, tango_dev, data_input=None):
-        """Changes the State of the device to ON."""
-        model.logger.info("Executing On command")
-        _allowed_modes = (DevState.OFF, DevState.STANDBY)
-        if tango_dev.get_state() is DevState.ON:
-            model.logger.info("CSP master is already in ON state")
-            return [[ResultCode.OK], ["CSP master is already in ON state"]]
+    CspMasterFQDN = device_property(dtype="str")
 
-        if tango_dev.get_state() in _allowed_modes:
-            # Turn on CSP Subarrays
-            for i in range(1, 4):
-                subarray_fqdn = f"mid_csp/elt/subarray_0{i}"
-                subarray_dev_proxy = DeviceProxy(subarray_fqdn)
-                subarray_dev_proxy.command_inout_asynch(
-                    "On", self.command_callback_method(model)
-                )
-            model.logger.info("On command invoked on Csp Subarray.")
+    def read_CspMasterFQDN(self):
+        """Return the CspMasterFQDN attribute."""
+        return self.component_manager.csp_master_fqdn
 
-            # set health state
-            csp_health_state = model.sim_quantities["healthState"]
-            set_enum(csp_health_state, "OK", model.time_func())
-            csp_health_state_enum = get_enum_int(csp_health_state, "OK")
-            tango_dev.push_change_event("healthState", csp_health_state_enum)
-            model.logger.info("heathState transitioned to OK state")
+    def write_CspMasterFQDN(self, value):
+        """Set the CspMasterFQDN attribute."""
+        self.component_manager.csp_master_fqdn = value
 
-            # Set device state
-            tango_dev.set_status("device turned on successfully")
-            tango_dev.set_state(DevState.ON)
-            tango_dev.push_change_event("State", tango_dev.get_state())
-            model.logger.info("Csp Master transitioned to the ON state.")
-        else:
-            Except.throw_exception(
-                "ON Command Failed",
-                "Not allowed",
-                ErrSeverity.WARN,
-            )
-        return [
-            [ResultCode.OK],
-            ["ON command invoked successfully on simulator."],
-        ]
+    def init_device(self):
+        super().init_device()
+        self._health_state = HealthState.OK
 
-    def command_callback_method(self, model):
-        """Simulates the callback method"""
-        model.logger.info("command callback for async command executed.")
+    class InitCommand(SKABaseDevice.InitCommand):
+        def do(self):
+            super().do()
+            self._device.set_change_event("State", True, False)
+            self._device.set_change_event("healthState", True, False)
+            return (ResultCode.OK, "")
 
-    def action_off(self, model, tango_dev, data_input=None):
-        """Changes the State of the device to OFF."""
-        _allowed_modes = (DevState.ON, DevState.ALARM, DevState.STANDBY)
-        if tango_dev.get_state() is DevState.OFF:
-            model.logger.info("CSP master is already in OFF state")
-            return [[ResultCode.OK], ["CSP master is already in Off state"]]
+    def create_component_manager(self):
+        cm = EmptyComponentManager(
+            logger=self.logger,
+            max_workers=None,
+            communication_state_callback=None,
+            component_state_callback=None,
+        )
+        return cm
 
-        if tango_dev.get_state() in _allowed_modes:
-            # Turn off CSP Subarrays
-            for i in range(1, 4):
-                subarray_fqdn = f"mid_csp/elt/subarray_0{i}"
-                subarray_dev_proxy = DeviceProxy(subarray_fqdn)
-                subarray_dev_proxy.command_inout_asynch(
-                    "Off", self.command_callback_method(model)
-                )
-            model.logger.info("Off command invoked on Csp Subarray.")
-
-            # Set device state
-            tango_dev.set_status("device turned off successfully")
-            tango_dev.set_state(DevState.OFF)
-            tango_dev.push_change_event("State", tango_dev.get_state())
-            model.logger.info("Csp Master transitioned to the OFF state.")
-
-        else:
-            Except.throw_exception(
-                "Off Command Failed",
-                "Not allowed",
-                ErrSeverity.WARN,
-            )
-        return [
-            [ResultCode.OK],
-            ["OFF command invoked successfully on simulator."],
-        ]
-
-    def action_cspmasterfault(self, model, tango_dev, data_input=None):
-        """Sets the device state to Fault"""
-        tango_dev.set_state(DevState.FAULT)
-        tango_dev.push_change_event("State", tango_dev.get_state())
-
-    def action_cspmaster_healthstate_degraded(self, model, tango_dev) -> None:
-        """Sets the CSP Master Health State to Degraded"""
-        csp_health_state = model.sim_quantities["healthState"]
-        set_enum(csp_health_state, "DEGRADED", model.time_func())
-        csp_health_state_enum = get_enum_int(csp_health_state, "DEGRADED")
-        tango_dev.push_change_event("healthState", csp_health_state_enum)
-        model.logger.info("heathState transitioned to DEGRADED state")
-
-    def action_cspmaster_healthstate_fault(self, model, tango_dev) -> None:
-        """Sets the CSP Master Health State to Fault"""
-        csp_health_state = model.sim_quantities["healthState"]
-        set_enum(csp_health_state, "FAULT", model.time_func())
-        csp_health_state_enum = get_enum_int(csp_health_state, "FAULT")
-        tango_dev.push_change_event("healthState", csp_health_state_enum)
-        model.logger.info("heathState transitioned to FAULT state")
-
-    def action_reset(self, model, tango_dev, data_input=None):
-        """Sets the device state back to Off"""
-        if tango_dev.get_state() is DevState.FAULT:
-            tango_dev.set_state(DevState.OFF)
-            tango_dev.push_change_event("State", tango_dev.get_state())
-            model.logger.info("Reset command successful on simulator.")
-
-    def action_standby(self, model, tango_dev, data_input=None):
-        """Changes the State of the device to STANDBY."""
-        _allowed_modes = (DevState.ALARM, DevState.OFF, DevState.ON)
-        if tango_dev.get_state() is DevState.STANDBY:
-            model.logger.info("CSP master is already in Standby state")
-            return [
-                [ResultCode.OK],
-                ["CSP master is already in Standby state"],
-            ]
-
-        if tango_dev.get_state() in _allowed_modes:
-            # Turn off CSP Subarrays
-            for i in range(1, 4):
-                subarray_fqdn = f"mid_csp/elt/subarray_0{i}"
-                subarray_dev_proxy = DeviceProxy(subarray_fqdn)
-                subarray_dev_proxy.command_inout_asynch(
-                    "Off", self.command_callback_method(model)
-                )
-            model.logger.info("Off command invoked on Csp Subarray.")
-
-            # Set device state
-            tango_dev.set_status("device turned off successfully")
-            tango_dev.set_state(DevState.STANDBY)
-            tango_dev.push_change_event("State", tango_dev.get_state())
-            model.logger.info("Csp Master transitioned to the STANDBY state.")
-        else:
-            Except.throw_exception(
-                "STANDBY Command Failed",
-                "Not allowed",
-                ErrSeverity.WARN,
-            )
-        return [
-            [ResultCode.OK],
-            ["STANDBY command invoked successfully on simulator."],
-        ]
-
-
-def get_enum_str(quantity):
-    """Returns the enum label of an enumerated data type
-
-    :param quantity: tango_simlib.quantities.Quantity
-        The quantity object of a DevEnum attribute
-    :return: str
-        Current string value of a DevEnum attribute
-    """
-    enumclass = enum.IntEnum(
-        "EnumLabels", quantity.meta["enum_labels"], start=0
+    @command(
+        dtype_in="DevState",
+        doc_in="state to assign",
     )
-    return enumclass(quantity.last_val).name
+    def SetDirectState(self, argin):
+        """
+        Trigger a DevState change
+        """
+        # import debugpy; debugpy.debug_this_thread()
+        if self.dev_state() != argin:
+            self.set_state(argin)
+            self.push_change_event("State", self.dev_state())
+
+    def is_On_allowed(self):
+        return True
+
+    @command(
+        dtype_in="DevVarStringArray",
+        doc_in="Input argument as an empty list",
+        dtype_out="DevVarLongStringArray",
+        doc_out="(ReturnType, 'informational message')",
+    )
+    def On(self, argin):
+        self.logger.info("Processing On command")
+        if self.dev_state() != DevState.ON:
+            self.set_state(DevState.ON)
+            self.push_change_event("State", self.dev_state())
+        return [[ResultCode.OK], [""]]
+
+    def is_Off_allowed(self):
+        return True
+
+    @command(
+        dtype_in="DevVarStringArray",
+        doc_in="Input argument as an empty list",
+        dtype_out="DevVarLongStringArray",
+        doc_out="(ReturnType, 'informational message')",
+    )
+    def Off(self, argin):
+        self.logger.info("Processing Off command")
+        if self.dev_state() != DevState.OFF:
+            self.set_state(DevState.OFF)
+            self.push_change_event("State", self.dev_state())
+        return [[ResultCode.OK], [""]]
+
+    def is_Standby_allowed(self):
+        return True
+
+    @command(
+        dtype_in="DevVarStringArray",
+        doc_in="Input argument as an empty list",
+        dtype_out="DevVarLongStringArray",
+        doc_out="(ReturnType, 'informational message')",
+    )
+    def Standby(self, argin):
+        self.logger.info("Processing Standby command")
+        if self.dev_state() != DevState.STANDBY:
+            self.set_state(DevState.STANDBY)
+            self.push_change_event("State", self.dev_state())
+        return [[ResultCode.OK], [""]]
+
+    @command(
+        dtype_in=int,
+        doc_in="state to assign",
+    )
+    def SetDirectHealthState(self, value):
+        """
+        Trigger a HealthState change
+        """
+        # import debugpy; debugpy.debug_this_thread()
+        if self.healthState != value:
+            self.healthState = value
+            self.push_change_event("healthState", self.healthState)
+
+    @property
+    def healthState(self) -> HealthState:
+        """Returns the healthstate of device"""
+        return self._healthState
+
+    @healthState.setter
+    def healthState(self, value: HealthState) -> None:
+        """Sets the healthState value for device"""
+        self._healthState = value
+
+    def set_health_state_degraded(self) -> list:
+        """Sets the healthState to Degraded"""
+        self.set_direct_healthstate(HealthState.DEGRADED)
+        logger.info(
+            "The healthState of device has changed to %s", self.healthState
+        )
+        if self.healthState == HealthState.DEGRADED:
+            return [ResultCode.OK]
+        else:
+            return [ResultCode.FAILED]
 
 
-def set_enum(quantity, label, timestamp):
-    """Sets the quantity last_val attribute to index of label
-
-    :param quantity: tango_simlib.quantities.Quantity
-        The quantity object from model
-    :param label: str
-        The desired label from enum list
-    :param timestamp: float
-        The time now
+def main(args=None, **kwargs):
     """
-    value = quantity.meta["enum_labels"].index(label)
-    quantity.set_val(value, timestamp)
+    Runs the CspMasterSimulator.
 
+    :param args: Arguments internal to TANGO
+    :param kwargs: Arguments internal to TANGO
 
-def get_enum_int(quantity, label):
-    """Returns the integer index value of an enumerated data type
+    :return: CspMasterSimulator TANGO object.
 
-    :param quantity: tango_simlib.quantities.Quantity
-        The quantity object from model
-    :param label: str
-        The desired label from enum list
-    :return: Int
-        Current integer value of a DevEnum attribute
     """
-    return quantity.meta["enum_labels"].index(label)
+    return run((CspMasterDevice,), args=args, **kwargs)
+
+
+if __name__ == "__main__":
+    main()

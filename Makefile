@@ -1,10 +1,9 @@
 #
-# Project makefile for a ska-tmc project. You should normally only need to modify
-# CAR_OCI_REGISTRY_USER and PROJECT below.
+# Project makefile for a ska-tmc-simulators project. You should normally only need to modify
+# PROJECT below.
 #
-
 #
-# CAR_OCI_REGISTRY_HOST, CAR_OCI_REGISTRY_USER and PROJECT are combined to define
+# CAR_OCI_REGISTRY_HOST and PROJECT are combined to define
 # the Docker tag for this project. The definition below inherits the standard
 # value for CAR_OCI_REGISTRY_HOST (artefact.skao.int) and overwrites
 # CAR_OCI_REGISTRY_USER and PROJECT to give a final Docker tag of
@@ -22,89 +21,122 @@ DASHBOARD ?= webjive-dash.dump
 # HELM_RELEASE is the release that all Kubernetes resources will be labelled
 # with
 HELM_RELEASE ?= test
+HELM_CHARTS_TO_PUBLISH=
 
-# HELM_CHART the chart name
-HELM_CHART = ska-tmc-simulators-umbrella
+# F401 Ignore unused imports because of tagno protected sections
+# W503 Ignore operator at beginning of line as conflicts with black
+# stretch line length to 180 because of super long parameter assignments
+PYTHON_SWITCHES_FOR_FLAKE8=--ignore=W503 --max-line-length=180
 
 # UMBRELLA_CHART_PATH Path of the umbrella chart to work with
+HELM_CHART=ska-tmc-simulators-umbrella
 UMBRELLA_CHART_PATH ?= charts/$(HELM_CHART)/
-CI_REGISTRY ?= registry.gitlab.com
-
 K8S_CHARTS ?= ska-tmc-simulators ska-tmc-simulators-umbrella## list of charts
 K8S_CHART ?= $(HELM_CHART)
 
-CUSTOM_VALUES ?=
-
-ifneq ($(CI_JOB_ID),)
-CUSTOM_VALUES = --set ska-tmc-simulators.tmcsim.image=$(PROJECT) \
-	--set ska-tmc-simulators.tmcsim.registry=$(CI_REGISTRY)/ska-telescope/ska-tmc/$(PROJECT) \
-	--set ska-tmc-simulators.tmcsim.tag=$(VERSION)-dev.c$(CI_COMMIT_SHORT_SHA)
-endif
-
-K8S_CHART_PARAMS = $(CUSTOM_VALUES)
-
-# Fixed variables
-# Timeout for gitlab-runner when run locally
-TIMEOUT = 86400
-
-# Docker, K8s and Gitlab CI variables
-# gitlab-runner debug mode - turn on with non-empty value
-RDEBUG ?=
-# gitlab-runner executor - shell or docker
-EXECUTOR ?= shell
-# DOCKER_HOST connector to gitlab-runner - local domain socket for shell exec
-DOCKER_HOST ?= unix:///var/run/docker.sock
-# DOCKER_VOLUMES pass in local domain socket for DOCKER_HOST
-DOCKER_VOLUMES ?= /var/run/docker.sock:/var/run/docker.sock
-# registry credentials - user/pass/registry - set these in PrivateRules.mak
-DOCKER_REGISTRY_USER_LOGIN ?=  ## registry credentials - user - set in PrivateRules.mak
-CI_REGISTRY_PASS_LOGIN ?=  ## registry credentials - pass - set in PrivateRules.mak
-
 CI_PROJECT_DIR ?= .
 
-KUBE_CONFIG_BASE64 ?=  ## base64 encoded kubectl credentials for KUBECONFIG
-KUBECONFIG ?= /etc/deploy/config ## KUBECONFIG location
-
-PYTHON_LINT_TARGET = src/
-
-ifneq ($(CI_JOB_ID),)
-CI_PROJECT_IMAGE :=
-# CUSTOM_VALUES = --set global.skatmc.registry=registry.gitlab.com/ska-telescope \
-# 	--set global.skatmc.image=ska-tmc-simulators \
-# 	--set global.skatmc.tag=$(CI_COMMIT_SHORT_SHA)
-else
-endif
-
-XAUTHORITYx ?= ${XAUTHORITY}
-THIS_HOST := $(shell ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' | head -n1)
-DISPLAY := $(THIS_HOST):0
-
-# define private overrides for above variables in here
--include PrivateRules.mak
+XAUTHORITY ?= $(HOME)/.Xauthority
+THIS_HOST := $(shell ip a 2> /dev/null | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' | head -n1)
+DISPLAY ?= $(THIS_HOST):0
+JIVE ?= false# Enable jive
+TARANTA ?= false
+MINIKUBE ?= true ## Minikube or not
+FAKE_DEVICES ?= true ## Install fake devices or not
+TANGO_HOST ?= tango-databaseds:10000## TANGO_HOST connection to the Tango DS
+SKUID ?= ska-ser-skuid-$(HELM_RELEASE)-svc.$(KUBE_NAMESPACE).svc.cluster.local:9870
+CI_PROJECT_PATH_SLUG ?= ska-tmc-simulators
+CI_ENVIRONMENT_SLUG ?= ska-tmc-simulators
+$(shell echo 'global:\n  annotations:\n    app.gitlab.com/app: $(CI_PROJECT_PATH_SLUG)\n    app.gitlab.com/env: $(CI_ENVIRONMENT_SLUG)' > gilab_values.yaml)
 
 # Test runner - run to completion job in K8s
 # name of the pod running the k8s_tests
-TEST_RUNNER = test-runner-$(CI_JOB_ID)-$(KUBE_NAMESPACE)-$(HELM_RELEASE)
+K8S_TEST_RUNNER = test-runner-$(HELM_RELEASE)
 
-#
-# include makefile to pick up the standard Make targets, e.g., 'make build'
-# build, 'make push' docker push procedure, etc. The other Make targets
-# ('make interactive', 'make test', etc.) are defined in this file.
-#
+ITANGO_DOCKER_IMAGE = $(CAR_OCI_REGISTRY_HOST)/ska-tango-images-tango-itango:9.3.9
+
+## override so that this picks up setup.cfg from the project root
+PYTHON_TEST_FILE ?=
+
+# Set the specific environment variables required for pytest
+PYTHON_VARS_BEFORE_PYTEST ?= PYTHONPATH=.:./src \
+							 TANGO_HOST=$(TANGO_HOST)
+
+MARK ?= -x## What -m opt to pass to pytest
+# run one test with FILE=acceptance/test_central_node.py::test_check_internal_model_according_to_the_tango_ecosystem_deployed
+FILE ?= tests## A specific test file to pass to pytest
+ADD_ARGS ?= ## Additional args to pass to pytest
+
+
+CI_REGISTRY ?= gitlab.com
+CUSTOM_VALUES = --set tmcsim.image.tag=$(VERSION)
+K8S_TEST_IMAGE_TO_TEST=$(CAR_OCI_REGISTRY_HOST)/$(PROJECT):$(VERSION)
+# ifneq ($(CI_JOB_ID),)
+# CUSTOM_VALUES = --set central_node.simulatorsmid.image.image=$(PROJECT) \
+# 	--set central_node.simulatorsmid.image.registry=$(CI_REGISTRY)/ska-telescope/ska-tmc/$(PROJECT) \
+# 	--set central_node.simulatorsmid.image.tag=$(VERSION)-dev.c$(CI_COMMIT_SHORT_SHA)
+
+# K8S_TEST_IMAGE_TO_TEST=$(CI_REGISTRY)/ska-telescope/ska-tmc/$(PROJECT)/$(PROJECT):$(VERSION)-dev.c$(CI_COMMIT_SHORT_SHA)
+# endif
+
+# override for python-test - must not have the above --true-context
+ifeq ($(MAKECMDGOALS),python-test)
+ADD_ARGS +=  --forked
+MARK = not post_deployment and not acceptance
+endif
+ifeq ($(MAKECMDGOALS),k8s-test)
+ADD_ARGS +=  --true-context
+MARK = SKA_mid and temp
+endif
+
+PYTHON_VARS_AFTER_PYTEST ?= -m '$(MARK)' $(ADD_ARGS) $(FILE)
+
+K8S_TEST_TEST_COMMAND = $(PYTHON_VARS_BEFORE_PYTEST) $(PYTHON_RUNNER) \
+						pytest \
+						$(PYTHON_VARS_AFTER_PYTEST) ./tests \
+						| tee pytest.stdout
 
 -include .make/k8s.mk
 -include .make/python.mk
--include .make/release.mk
--include .make/test.mk
--include .make/help.mk
+-include .make/helm.mk
 -include .make/oci.mk
 -include .make/docs.mk
+-include .make/release.mk
 -include .make/make.mk
+-include .make/help.mk
+-include PrivateRules.mak
 
-#
-# Defines a default make target so that help is printed if make is called
-# without a target
-#
-.DEFAULT_GOAL := help
+# flag this up for the oneshot /Dockerfile
+OCI_IMAGES=ska-tmc-simulators
 
-# .PHONY: all test up down help k8s show lint deploy delete logs describe mkcerts localip namespace delete_namespace ingress_check kubeconfig kubectl_dependencies helm_dependencies rk8s_test k8s_test rlint
+clean:
+	@rm -rf .coverage .eggs .pytest_cache build */__pycache__ */*/__pycache__ */*/*/__pycache__ */*/*/*/__pycache__ charts/ska-tmc-simulators/charts \
+			charts/build charts/test-parent/charts charts/ska-tmc-simulators/Chart.lock charts/test-parent/Chart.lock code-coverage \
+			tests/.pytest_cache
+
+unit-test: python-test
+
+PYTHON_BUILD_TYPE = non_tag_setup
+
+K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
+	--set global.tango_host=$(TANGO_HOST) \
+	--set ska-tango-base.display=$(DISPLAY) \
+	--set ska-tango-base.xauthority=$(XAUTHORITY) \
+	--set ska-tango-base.jive.enabled=$(JIVE) \
+	--set tmcsim.telescope=$(TELESCOPE) \
+	--set tmcsim.deviceServers.mocks.enabled=$(FAKE_DEVICES) \
+	--set ska-taranta.enabled=$(TARANTA) \
+	--set tmcsim.deviceServers.simulators.SkuidService=$(SKUID) \
+	$(CUSTOM_VALUES) \
+	--values gilab_values.yaml
+
+test-requirements:
+	@poetry export --without-hashes --dev --format requirements.txt --output tests/requirements.txt
+
+k8s-pre-test: python-pre-test test-requirements
+
+requirements: ## Install Dependencies
+	poetry install
+
+# .PHONY is additive
+.PHONY: unit-test
