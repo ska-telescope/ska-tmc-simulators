@@ -1,16 +1,22 @@
 [tool.poetry]
 name = "ska_tmc_simulators"
 version = "0.0.6"
-description = "ska_tmc_simulators"
+description = "Repository that contains simulators for various purposes."
 authors = ["Team HIMALAYA" , "Team SAHYADRI"]
 license = "BSD-3-Clause"
 
 packages = [
-    { include = "ska_tmc_simulators/cspmastersimulator", from = "src" }
+    { include = "ska_tmc_simulators/cspmastersimulator", from = "src" },
+    { include = "ska-tmc-simulators/sdpmastersimulator", from = "src" },
+    { include = "ska-tmc-simulators/cspsubarraysimulator", from = "src" },
+    { include = "ska-tmc-simulators/sdpsubarraysimulator", from = "src" },
 ]
 
 [tool.poetry.scripts]
 CspMasterSimulatorDS="ska_tmc_simulators.cspmastersimulator.csp_master:main"
+CspSubarraySimulatorDS="ska_tmc_simulators.cspsubarraysimulator.csp_subarray:main"
+SdpSubarraySimulatorDS="ska_tmc_simulators.sdpsubarraysimulator.sdp_subarray:main"
+SdpMasterSimulatorDS="ska_tmc_simulators.sdpmastersimulator.sdp_master:main"
 
 [[tool.poetry.source]]
 name = 'ska-nexus'
@@ -25,6 +31,7 @@ ska-ser-logging = "^0.4.1"
 ska-tango-base = "0.13.3"
 pytz = "2021.3"
 ipython = "8.5.0"
+tango-simlib = "^0.9.4"
 ska_tmc_common = "0.1.54"
 pytest-runner = "^6.0.0"
 prospector = {extras = ["with_pyroma"], version = "^1.8.4"}
