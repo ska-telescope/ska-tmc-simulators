@@ -6,29 +6,29 @@ command: "python3 /app/src/ska_tmc_simulators/cspmastersimulator/csp_master.py"
 server:
   name: "csp_master"
   instances:
-  - name: "01"
-    classes:
-      - name: "CspMasterDevice"
-        devices:
-        - name: "mid-csp/control/0"
-          properties:
-          - name: "LoggingTargetsDefault"
-            values:
-            - "tango::logger"
-          - name: "LoggingLevelDefault"
-            values:
-            - "5"
-          - name: "polled_attr"
-            values:
-            - "healthstate"
-            - "1000"
-          attribute_properties:
-          - attribute: "healthState"
-            properties:
-            - name: "abs_change"
-              values:
-              - "-1"
-              - "1"
+    - name: "01"
+      classes:
+        - name: "CspMasterSimulator"
+          devices:
+            - name: "mid-csp/control/0"
+              properties:
+                - name: "LoggingTargetsDefault"
+                  values:
+                    - "tango::logger"
+                - name: "LoggingLevelDefault"
+                  values:
+                    - "5"
+                - name: "polled_attr"
+                  values:
+                    - "healthstate"
+                    - "1000"
+              attribute_properties:
+                - attribute: "healthState"
+                  properties:
+                    - name: "abs_change"
+                      values:
+                        - "-1"
+                        - "1"
 depends_on:
   - device: sys/database/2
 image:
