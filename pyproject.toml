@@ -7,9 +7,9 @@ license = "BSD-3-Clause"
 
 packages = [
     { include = "ska_tmc_simulators/cspmastersimulator", from = "src" },
-    { include = "ska-tmc-simulators/sdpmastersimulator", from = "src" },
-    { include = "ska-tmc-simulators/cspsubarraysimulator", from = "src" },
-    { include = "ska-tmc-simulators/sdpsubarraysimulator", from = "src" },
+    { include = "ska_tmc_simulators/sdpmastersimulator", from = "src" },
+    { include = "ska_tmc_simulators/cspsubarraysimulator", from = "src" },
+    { include = "ska_tmc_simulators/sdpsubarraysimulator", from = "src" },
 ]
 
 [tool.poetry.scripts]
