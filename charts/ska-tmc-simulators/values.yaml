@@ -5,7 +5,6 @@ enabled: true
 
 system: TMC-simulators
 telescope: SKA-mid
-sub-system: ska-tmc-simulators
 
 labels:
   app: ska_tmc_simulators
