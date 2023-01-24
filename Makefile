@@ -50,24 +50,7 @@ CI_PROJECT_PATH_SLUG ?= ska-tmc-simulators
 CI_ENVIRONMENT_SLUG ?= ska-tmc-simulators
 $(shell echo 'global:\n  annotations:\n    app.gitlab.com/app: $(CI_PROJECT_PATH_SLUG)\n    app.gitlab.com/env: $(CI_ENVIRONMENT_SLUG)' > gilab_values.yaml)
 
-# Test runner - run to completion job in K8s
-# name of the pod running the k8s_tests
-K8S_TEST_RUNNER = test-runner-$(HELM_RELEASE)
-
 ITANGO_DOCKER_IMAGE = $(CAR_OCI_REGISTRY_HOST)/ska-tango-images-tango-itango:9.3.9
-
-## override so that this picks up setup.cfg from the project root
-PYTHON_TEST_FILE ?=
-
-# Set the specific environment variables required for pytest
-PYTHON_VARS_BEFORE_PYTEST ?= PYTHONPATH=.:./src \
-							 TANGO_HOST=$(TANGO_HOST)
-
-MARK ?= -x## What -m opt to pass to pytest
-# run one test with FILE=acceptance/test_central_node.py::test_check_internal_model_according_to_the_tango_ecosystem_deployed
-FILE ?= tests## A specific test file to pass to pytest
-ADD_ARGS ?= ## Additional args to pass to pytest
-
 
 CI_REGISTRY ?= gitlab.com
 CUSTOM_VALUES = --set tmcsim.image.tag=$(VERSION)
@@ -81,21 +64,6 @@ K8S_TEST_IMAGE_TO_TEST=$(CAR_OCI_REGISTRY_HOST)/$(PROJECT):$(VERSION)
 # endif
 
 # override for python-test - must not have the above --true-context
-ifeq ($(MAKECMDGOALS),python-test)
-ADD_ARGS +=  --forked
-MARK = not post_deployment and not acceptance
-endif
-ifeq ($(MAKECMDGOALS),k8s-test)
-ADD_ARGS +=  --true-context
-MARK = SKA_mid and temp
-endif
-
-PYTHON_VARS_AFTER_PYTEST ?= -m '$(MARK)' $(ADD_ARGS) $(FILE)
-
-K8S_TEST_TEST_COMMAND = $(PYTHON_VARS_BEFORE_PYTEST) $(PYTHON_RUNNER) \
-						pytest \
-						$(PYTHON_VARS_AFTER_PYTEST) ./tests \
-						| tee pytest.stdout
 
 -include .make/k8s.mk
 -include .make/python.mk
@@ -110,13 +78,6 @@ K8S_TEST_TEST_COMMAND = $(PYTHON_VARS_BEFORE_PYTEST) $(PYTHON_RUNNER) \
 # flag this up for the oneshot /Dockerfile
 OCI_IMAGES=ska-tmc-simulators
 
-clean:
-	@rm -rf .coverage .eggs .pytest_cache build */__pycache__ */*/__pycache__ */*/*/__pycache__ */*/*/*/__pycache__ charts/ska-tmc-simulators/charts \
-			charts/build charts/test-parent/charts charts/ska-tmc-simulators/Chart.lock charts/test-parent/Chart.lock code-coverage \
-			tests/.pytest_cache
-
-unit-test: python-test
-
 PYTHON_BUILD_TYPE = non_tag_setup
 
 K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
@@ -130,14 +91,3 @@ K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
 	--set tmcsim.deviceServers.simulators.SkuidService=$(SKUID) \
 	$(CUSTOM_VALUES) \
 	--values gilab_values.yaml
-
-test-requirements:
-	@poetry export --without-hashes --dev --format requirements.txt --output tests/requirements.txt
-
-k8s-pre-test: python-pre-test test-requirements
-
-requirements: ## Install Dependencies
-	poetry install
-
-# .PHONY is additive
-.PHONY: unit-test
