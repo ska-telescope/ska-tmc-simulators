@@ -27,7 +27,7 @@ stages:
   - lint
   - build
   - test
-  # - deploy
+  - deploy
   - publish
   - pages
 
@@ -66,9 +66,9 @@ include:
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/python-publish.gitlab-ci.yml'
 
-  # # Deploy stage
-  # - project: 'ska-telescope/templates-repository'
-  #   file: 'gitlab-ci/includes/deploy.gitlab-ci.yml'
+  # Deploy stage
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/deploy.use-agent.gitlab-ci.yml'
 
   # Docs pages
   - project: 'ska-telescope/templates-repository'
