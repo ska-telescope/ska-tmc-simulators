@@ -26,17 +26,6 @@ class EmptyComponentManager(BaseComponentManager):
         super().__init__(
             logger=logger, max_workers=max_workers, *args, **kwargs
         )
-        self._csp_master_fqdn = ""
-
-    @property
-    def csp_master_fqdn(self):
-        """Csp Master Device FQDN getter"""
-        return self._csp_master_fqdn
-
-    @csp_master_fqdn.setter
-    def csp_master_fqdn(self, value):
-        """Csp Master Device FQDN setter"""
-        self._csp_master_fqdn = value
 
     def start_communicating(self):
         """This method is not used by TMC."""
@@ -49,16 +38,6 @@ class EmptyComponentManager(BaseComponentManager):
 
 class CspMasterDevice(SKABaseDevice):
     """Class for csp master simulator device"""
-
-    CspMasterFQDN = device_property(dtype="str")
-
-    def read_CspMasterFQDN(self):
-        """Return the CspMasterFQDN attribute."""
-        return self.component_manager.csp_master_fqdn
-
-    def write_CspMasterFQDN(self, value):
-        """Set the CspMasterFQDN attribute."""
-        self.component_manager.csp_master_fqdn = value
 
     def init_device(self):
         super().init_device()
@@ -153,36 +132,16 @@ class CspMasterDevice(SKABaseDevice):
 
     @command(
         dtype_in=int,
-        doc_in="state to assign",
+        doc_in="healthstate to assign",
     )
     def SetDirectHealthState(self, value):
         """
         Trigger a HealthState change
         """
         # import debugpy; debugpy.debug_this_thread()
-        if self.healthState != value:
-            self.healthState = value
-            self.push_change_event("healthState", self.healthState)
-
-    @property
-    def healthState(self) -> HealthState:
-        """Returns the healthstate of device"""
-        return self._healthState
-
-    @healthState.setter
-    def healthState(self, value: HealthState) -> None:
-        """Sets the healthState value for device"""
-        self._healthState = value
-
-    def set_health_state_degraded(self) -> list:
-        """Sets the healthState to Degraded"""
-        self.set_direct_healthstate(HealthState.DEGRADED)
-        logger.info(
-            "The healthState of device has changed to %s", self.healthState
-        )
-        if self.healthState == HealthState.DEGRADED:
-            return [ResultCode.OK]
-        return [ResultCode.FAILED]
+        if self._health_state != value:
+            self._health_state = value
+            self.push_change_event("healthState", self._health_state)
 
 
 def main(args=None, **kwargs):
