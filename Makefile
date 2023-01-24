@@ -30,9 +30,8 @@ PYTHON_LINT_TARGET = src/
 PYTHON_SWITCHES_FOR_FLAKE8=--ignore=W503,N --max-line-length=180
 
 # UMBRELLA_CHART_PATH Path of the umbrella chart to work with
-UMBRELLA_CHART=ska-tmc-simulators-umbrella
-HELM_CHART=ska-tmc-simulators
-UMBRELLA_CHART_PATH ?= charts/$(UMBRELLA_CHART)/
+HELM_CHART=ska-tmc-simulators-umbrella
+UMBRELLA_CHART_PATH ?= charts/$(HELM_CHART)/
 K8S_CHARTS ?= ska-tmc-simulators ska-tmc-simulators-umbrella## list of charts
 K8S_CHART ?= $(HELM_CHART)
 
