@@ -45,7 +45,6 @@ TARANTA ?= false
 MINIKUBE ?= true ## Minikube or not
 FAKE_DEVICES ?= true ## Install fake devices or not
 TANGO_HOST ?= tango-databaseds:10000## TANGO_HOST connection to the Tango DS
-SKUID ?= ska-ser-skuid-$(HELM_RELEASE)-svc.$(KUBE_NAMESPACE).svc.cluster.local:9870
 CI_PROJECT_PATH_SLUG ?= ska-tmc-simulators
 CI_ENVIRONMENT_SLUG ?= ska-tmc-simulators
 $(shell echo 'global:\n  annotations:\n    app.gitlab.com/app: $(CI_PROJECT_PATH_SLUG)\n    app.gitlab.com/env: $(CI_ENVIRONMENT_SLUG)' > gilab_values.yaml)
@@ -55,15 +54,6 @@ ITANGO_DOCKER_IMAGE = $(CAR_OCI_REGISTRY_HOST)/ska-tango-images-tango-itango:9.3
 CI_REGISTRY ?= gitlab.com
 CUSTOM_VALUES = --set tmcsim.image.tag=$(VERSION)
 K8S_TEST_IMAGE_TO_TEST=$(CAR_OCI_REGISTRY_HOST)/$(PROJECT):$(VERSION)
-# ifneq ($(CI_JOB_ID),)
-# CUSTOM_VALUES = --set central_node.simulatorsmid.image.image=$(PROJECT) \
-# 	--set central_node.simulatorsmid.image.registry=$(CI_REGISTRY)/ska-telescope/ska-tmc/$(PROJECT) \
-# 	--set central_node.simulatorsmid.image.tag=$(VERSION)-dev.c$(CI_COMMIT_SHORT_SHA)
-
-# K8S_TEST_IMAGE_TO_TEST=$(CI_REGISTRY)/ska-telescope/ska-tmc/$(PROJECT)/$(PROJECT):$(VERSION)-dev.c$(CI_COMMIT_SHORT_SHA)
-# endif
-
-# override for python-test - must not have the above --true-context
 
 -include .make/k8s.mk
 -include .make/python.mk
@@ -86,8 +76,5 @@ K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
 	--set ska-tango-base.xauthority=$(XAUTHORITY) \
 	--set ska-tango-base.jive.enabled=$(JIVE) \
 	--set tmcsim.telescope=$(TELESCOPE) \
-	--set tmcsim.deviceServers.mocks.enabled=$(FAKE_DEVICES) \
-	--set ska-taranta.enabled=$(TARANTA) \
-	--set tmcsim.deviceServers.simulators.SkuidService=$(SKUID) \
 	$(CUSTOM_VALUES) \
 	--values gilab_values.yaml
