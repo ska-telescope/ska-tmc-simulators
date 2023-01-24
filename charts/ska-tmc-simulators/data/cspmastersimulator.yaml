@@ -2,8 +2,6 @@ name: "cspmastersimulator-{{.Release.Name}}"
 function: csp-monitoring
 domain: general-monitoring
 instances: ["01"]
-# entrypoint:
-#   - name: "/app/data/ska_tmc_simulators.cspmastersimulator.csp_master.CspMasterDevice"
 command: "python3 /app/src/ska_tmc_simulators/cspmastersimulator/csp_master.py"
 server:
   name: "csp_master"
