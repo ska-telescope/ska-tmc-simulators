@@ -44,12 +44,3 @@ ska-tmc-simulators:
   deviceServers:
     cspmastersimulator:
       enabled: true
-
-    sdpmastersimulator:
-      enabled: false
-
-    cspsubarraysimulator:
-      enabled: false
-
-    sdpsubarraysimulator:
-      enabled: false
