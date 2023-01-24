@@ -16,7 +16,7 @@ profile=no
 
 # Add files or directories to the blacklist. They should be base names, not
 # paths.
-ignore=CVS, test, setup.py, configure_hdbpp.py
+ignore=CVS, tests, setup.py, configure_hdbpp.py
 
 # Pickle collected data for later comparisons.
 persistent=yes
@@ -42,7 +42,7 @@ load-plugins=
 # --enable=similarities". If you want to run only the classes checker, but have
 # no Warning level messages displayed, use"--disable=all --enable=classes
 # --disable=W"
-disable=invalid-name,broad-except,redefined-builtin,protected-access,unrecognized-option,R0801
+disable=invalid-name,broad-except,redefined-builtin,protected-access,unrecognized-option,R0801,W
 
 [REPORTS]
 

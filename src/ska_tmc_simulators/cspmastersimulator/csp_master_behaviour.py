@@ -18,6 +18,8 @@ logger = logging.getLogger(__name__)
 
 
 class EmptyComponentManager(BaseComponentManager):
+    """Dummy Component Manager class"""
+
     def __init__(
         self, logger=None, max_workers: Optional[int] = None, *args, **kwargs
     ):
@@ -28,21 +30,21 @@ class EmptyComponentManager(BaseComponentManager):
 
     @property
     def csp_master_fqdn(self):
+        """Csp Master Device FQDN getter"""
         return self._csp_master_fqdn
 
     @csp_master_fqdn.setter
     def csp_master_fqdn(self, value):
+        """Csp Master Device FQDN setter"""
         self._csp_master_fqdn = value
 
     def start_communicating(self):
         """This method is not used by TMC."""
         self.logger.info("Start communicating method called")
-        pass
 
     def stop_communicating(self):
         """This method is not used by TMC."""
         self.logger.info("Stop communicating method called")
-        pass
 
 
 class CspMasterDevice(SKABaseDevice):
@@ -63,13 +65,17 @@ class CspMasterDevice(SKABaseDevice):
         self._health_state = HealthState.OK
 
     class InitCommand(SKABaseDevice.InitCommand):
+        """Initializer class"""
+
         def do(self):
+            """Do method during intialization"""
             super().do()
             self._device.set_change_event("State", True, False)
             self._device.set_change_event("healthState", True, False)
             return (ResultCode.OK, "")
 
     def create_component_manager(self):
+        """Creates component manager"""
         cm = EmptyComponentManager(
             logger=self.logger,
             max_workers=None,
@@ -92,6 +98,7 @@ class CspMasterDevice(SKABaseDevice):
             self.push_change_event("State", self.dev_state())
 
     def is_On_allowed(self):
+        """Command allowed method"""
         return True
 
     @command(
@@ -101,6 +108,7 @@ class CspMasterDevice(SKABaseDevice):
         doc_out="(ReturnType, 'informational message')",
     )
     def On(self, argin):
+        """On command method"""
         self.logger.info("Processing On command")
         if self.dev_state() != DevState.ON:
             self.set_state(DevState.ON)
@@ -108,6 +116,7 @@ class CspMasterDevice(SKABaseDevice):
         return [[ResultCode.OK], [""]]
 
     def is_Off_allowed(self):
+        """Command allowed method"""
         return True
 
     @command(
@@ -117,6 +126,7 @@ class CspMasterDevice(SKABaseDevice):
         doc_out="(ReturnType, 'informational message')",
     )
     def Off(self, argin):
+        """Off command method"""
         self.logger.info("Processing Off command")
         if self.dev_state() != DevState.OFF:
             self.set_state(DevState.OFF)
@@ -124,6 +134,7 @@ class CspMasterDevice(SKABaseDevice):
         return [[ResultCode.OK], [""]]
 
     def is_Standby_allowed(self):
+        """Command allowed method"""
         return True
 
     @command(
@@ -133,6 +144,7 @@ class CspMasterDevice(SKABaseDevice):
         doc_out="(ReturnType, 'informational message')",
     )
     def Standby(self, argin):
+        """Standby command method"""
         self.logger.info("Processing Standby command")
         if self.dev_state() != DevState.STANDBY:
             self.set_state(DevState.STANDBY)
@@ -170,8 +182,7 @@ class CspMasterDevice(SKABaseDevice):
         )
         if self.healthState == HealthState.DEGRADED:
             return [ResultCode.OK]
-        else:
-            return [ResultCode.FAILED]
+        return [ResultCode.FAILED]
 
 
 def main(args=None, **kwargs):
