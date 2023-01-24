@@ -45,7 +45,7 @@ server:
 depends_on:
   - device: sys/database/2
 image:
-  registry: "{{.Values.global.tmcsim.registry}}"
-  image: "{{.Values.global.tmcsim.image}}"
-  tag: "{{.Values.global.tmcsim.tag}}"
-  pullPolicy: "{{.Values.global.tmcsim.pullPolicy}}"
+  registry: "{{.Values.tmcsim.registry}}"
+  image: "{{.Values.tmcsim.image}}"
+  tag: "{{.Values.tmcsim.tag}}"
+  pullPolicy: "{{.Values.tmcsim.pullPolicy}}"

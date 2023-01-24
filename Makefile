@@ -1,10 +1,9 @@
 #
-# Project makefile for a ska-tmc project. You should normally only need to modify
-# CAR_OCI_REGISTRY_USER and PROJECT below.
+# Project makefile for a ska-tmc-simulators project. You should normally only need to modify
+# PROJECT below.
 #
-
 #
-# CAR_OCI_REGISTRY_HOST, CAR_OCI_REGISTRY_USER and PROJECT are combined to define
+# CAR_OCI_REGISTRY_HOST and PROJECT are combined to define
 # the Docker tag for this project. The definition below inherits the standard
 # value for CAR_OCI_REGISTRY_HOST (artefact.skao.int) and overwrites
 # CAR_OCI_REGISTRY_USER and PROJECT to give a final Docker tag of
@@ -16,89 +15,66 @@ PROJECT = ska-tmc-simulators
 
 # KUBE_NAMESPACE defines the Kubernetes Namespace that will be deployed to
 # using Helm.  If this does not already exist it will be created
-KUBE_NAMESPACE ?= tmcmidsimulators
+KUBE_NAMESPACE ?= ska-tmc-simulators-mid
 DASHBOARD ?= webjive-dash.dump
 
 # HELM_RELEASE is the release that all Kubernetes resources will be labelled
 # with
 HELM_RELEASE ?= test
+HELM_CHARTS_TO_PUBLISH=
 
-# HELM_CHART the chart name
-HELM_CHART ?= ska-tmc-simulators-umbrella
+# F401 Ignore unused imports because of tagno protected sections
+# W503 Ignore operator at beginning of line as conflicts with black
+# stretch line length to 180 because of super long parameter assignments
+PYTHON_LINT_TARGET = src/
+PYTHON_SWITCHES_FOR_FLAKE8=--ignore=W503,N --max-line-length=180
 
 # UMBRELLA_CHART_PATH Path of the umbrella chart to work with
-CHART_PATH ?= charts/ska-tmc-simulators/
-UMBRELLA_CHART_PATH ?= charts/ska-tmc-simulators-umbrella/
-# Fixed variables
-# Timeout for gitlab-runner when run locally
-TIMEOUT = 86400
-# Helm version
-HELM_VERSION = v3.3.1
-# kubectl version
-KUBERNETES_VERSION = v1.19.2
-
-# Docker, K8s and Gitlab CI variables
-# gitlab-runner debug mode - turn on with non-empty value
-RDEBUG ?=
-# gitlab-runner executor - shell or docker
-EXECUTOR ?= shell
-# DOCKER_HOST connector to gitlab-runner - local domain socket for shell exec
-DOCKER_HOST ?= unix:///var/run/docker.sock
-# DOCKER_VOLUMES pass in local domain socket for DOCKER_HOST
-DOCKER_VOLUMES ?= /var/run/docker.sock:/var/run/docker.sock
-# registry credentials - user/pass/registry - set these in PrivateRules.mak
-DOCKER_REGISTRY_USER_LOGIN ?=  ## registry credentials - user - set in PrivateRules.mak
-CI_REGISTRY_PASS_LOGIN ?=  ## registry credentials - pass - set in PrivateRules.mak
-CI_REGISTRY ?= gitlab.com/ska-telescope/ska-tmc-simulators
+HELM_CHART=ska-tmc-simulators-umbrella
+UMBRELLA_CHART_PATH ?= charts/$(HELM_CHART)/
+K8S_CHARTS ?= ska-tmc-simulators ska-tmc-simulators-umbrella## list of charts
+K8S_CHART ?= $(HELM_CHART)
 
 CI_PROJECT_DIR ?= .
 
-KUBE_CONFIG_BASE64 ?=  ## base64 encoded kubectl credentials for KUBECONFIG
-KUBECONFIG ?= /etc/deploy/config ## KUBECONFIG location
+XAUTHORITY ?= $(HOME)/.Xauthority
+THIS_HOST := $(shell ip a 2> /dev/null | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' | head -n1)
+DISPLAY ?= $(THIS_HOST):0
+JIVE ?= false# Enable jive
+TARANTA ?= false
+MINIKUBE ?= true ## Minikube or not
+FAKE_DEVICES ?= true ## Install fake devices or not
+TANGO_HOST ?= tango-databaseds:10000## TANGO_HOST connection to the Tango DS
+CI_PROJECT_PATH_SLUG ?= ska-tmc-simulators
+CI_ENVIRONMENT_SLUG ?= ska-tmc-simulators
+$(shell echo 'global:\n  annotations:\n    app.gitlab.com/app: $(CI_PROJECT_PATH_SLUG)\n    app.gitlab.com/env: $(CI_ENVIRONMENT_SLUG)' > gilab_values.yaml)
 
-PYTHON_LINT_TARGET = src/
+ITANGO_DOCKER_IMAGE = $(CAR_OCI_REGISTRY_HOST)/ska-tango-images-tango-itango:9.3.9
 
-#VALUES_FILE ?= charts/ska-tmc-mid/values.yaml
-CUSTOM_VALUES =
-
-ifneq ($(CI_JOB_ID),)
-CI_PROJECT_IMAGE :=
-# CUSTOM_VALUES = --set global.skatmc.registry=registry.gitlab.com/ska-telescope \
-# 	--set global.skatmc.image=ska-tmc-simulators \
-# 	--set global.skatmc.tag=$(CI_COMMIT_SHORT_SHA)
-else
-endif
-
-XAUTHORITYx ?= ${XAUTHORITY}
-THIS_HOST := $(shell ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' | head -n1)
-DISPLAY := $(THIS_HOST):0
-
-# define private overrides for above variables in here
--include PrivateRules.mak
-
-# Test runner - run to completion job in K8s
-# name of the pod running the k8s_tests
-TEST_RUNNER = test-runner-$(CI_JOB_ID)-$(KUBE_NAMESPACE)-$(HELM_RELEASE)
-
-#
-# include makefile to pick up the standard Make targets, e.g., 'make build'
-# build, 'make push' docker push procedure, etc. The other Make targets
-# ('make interactive', 'make test', etc.) are defined in this file.
-#
+CI_REGISTRY ?= gitlab.com
+CUSTOM_VALUES = --set tmcsim.image.tag=$(VERSION)
+K8S_TEST_IMAGE_TO_TEST=$(CAR_OCI_REGISTRY_HOST)/$(PROJECT):$(VERSION)
 
 -include .make/k8s.mk
 -include .make/python.mk
--include .make/release.mk
--include .make/test.mk
--include .make/help.mk
+-include .make/helm.mk
 -include .make/oci.mk
 -include .make/docs.mk
+-include .make/release.mk
 -include .make/make.mk
+-include .make/help.mk
+-include PrivateRules.mak
 
-#
-# Defines a default make target so that help is printed if make is called
-# without a target
-#
-.DEFAULT_GOAL := help
+# flag this up for the oneshot /Dockerfile
+OCI_IMAGES=ska-tmc-simulators
 
-# .PHONY: all test up down help k8s show lint deploy delete logs describe mkcerts localip namespace delete_namespace ingress_check kubeconfig kubectl_dependencies helm_dependencies rk8s_test k8s_test rlint
+PYTHON_BUILD_TYPE = non_tag_setup
+
+K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
+	--set global.tango_host=$(TANGO_HOST) \
+	--set ska-tango-base.display=$(DISPLAY) \
+	--set ska-tango-base.xauthority=$(XAUTHORITY) \
+	--set ska-tango-base.jive.enabled=$(JIVE) \
+	--set tmcsim.telescope=$(TELESCOPE) \
+	$(CUSTOM_VALUES) \
+	--values gilab_values.yaml

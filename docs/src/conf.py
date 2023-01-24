@@ -35,7 +35,7 @@ def setup(app):
 
 # -- Project information -----------------------------------------------------
 
-project = "ska-tmc-simulators"
+project = "ska_tmc_simulators"
 copyright = "2021, NCRA India"
 author = "NCRA India"
 
