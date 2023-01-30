@@ -1,46 +1,59 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
- 
+
 """Demo Weather Station tango device server"""
- 
+
 import time
-import numpy
- 
-from tango import AttrQuality, AttrWriteType, DispLevel, DevState, DebugIt
-from tango.server import Device, attribute, command, pipe, device_property
-import logging
+
+from tango import AttrQuality, AttrWriteType, DevState, DispLevel
+from tango.server import Device, attribute, command, device_property, pipe
 
 
 class WeatherStation(Device):
 
-    windspeed = attribute(label="WindSpeed", dtype=float,
-                        display_level=DispLevel.OPERATOR,
-                        access=AttrWriteType.READ_WRITE,
-                        unit="km/hr", format="8.4f")
+    windspeed = attribute(
+        label="WindSpeed",
+        dtype=float,
+        display_level=DispLevel.OPERATOR,
+        access=AttrWriteType.READ_WRITE,
+        unit="km/hr",
+        format="8.4f",
+    )
 
-    temperature = attribute(label="Temperature", dtype=float,
-                        display_level=DispLevel.OPERATOR,
-                        access=AttrWriteType.READ_WRITE,
-                        unit="K", format="8.4f",
-                        min_value=265, max_value=350,
-                        min_alarm=273, max_alarm=305,
-                        min_warning=260, max_warning=310,
-                        fget="get_temp",
-                        fset="set_temp",)
+    temperature = attribute(
+        label="Temperature",
+        dtype=float,
+        display_level=DispLevel.OPERATOR,
+        access=AttrWriteType.READ_WRITE,
+        unit="K",
+        format="8.4f",
+        min_value=265,
+        max_value=350,
+        min_alarm=273,
+        max_alarm=305,
+        min_warning=260,
+        max_warning=310,
+        fget="get_temp",
+        fset="set_temp",
+    )
 
-    ionization = attribute(label="Ionization",
-                      dtype=((int,),),)
+    ionization = attribute(
+        label="Ionization",
+        dtype=((int,),),
+    )
 
-    humidity = attribute(label="Humidity",
-                      dtype=((int,),),)
+    humidity = attribute(
+        label="Humidity",
+        dtype=((int,),),
+    )
 
-    info = pipe(label='Info')
+    info = pipe(label="Info")
 
     host = device_property(dtype=str)
     port = device_property(dtype=int, default_value=9788)
 
     def always_executed_hook(self):
-        t = 'Windspeed=%s Temperature=%s'%(self.windspeed, self.temperature)
+        t = "Windspeed=%s Temperature=%s" % (self.windspeed, self.temperature)
         print(t)
         self.set_status(t)
 
@@ -49,7 +62,7 @@ class WeatherStation(Device):
         self.__windspeed = 0.0
         self.set_state(DevState.STANDBY)
         self.set_change_event("windspeed", True, False)
-    
+
     def write_windspeed(self):
         self.info_stream("read_windspeed(%s, %d)", self.host, self.port)
         return 9.99, time.time(), AttrQuality.ATTR_WARNING
@@ -61,12 +74,12 @@ class WeatherStation(Device):
     def set_windspeed(self, windspeed):
         # should set the power supply current
         self.__windspeed = windspeed
-        self.push_change_event('current', windspeed)
+        self.push_change_event("current", windspeed)
 
     def read_info(self):
-        return 'Information', dict(manufacturer='Tango',
-                                   model='PS2000',
-                                   version_number=123)
+        return "Information", dict(
+            manufacturer="Tango", model="PS2000", version_number=123
+        )
 
     # @DebugIt()
     # def read_noise(self):
