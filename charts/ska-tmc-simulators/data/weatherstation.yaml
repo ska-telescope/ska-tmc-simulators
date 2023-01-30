@@ -1,0 +1,24 @@
+name: "weatherstation-{{.Release.Name}}"
+function: observation-execution
+domain: general-monitoring
+instances: ["test"]
+entrypoints:
+  - path: "/app/src/ska_tmc_simulators/weatherstation/weatherstation.py"
+    name: "weatherstation.WeatherStation"
+labels:
+  app: "simulator"
+server:
+  name: "WeatherStation"
+  instances:
+    - name: "test"
+      classes:
+      - name: "WeatherStation"
+        devices:
+        - name: "test/WeatherStation/1"
+depends_on:
+  - device: sys/database/2
+image:
+  registry: "{{.Values.tmcsim.registry}}"
+  image: "{{.Values.tmcsim.image}}"
+  tag: "{{.Values.tmcsim.tag}}"
+  pullPolicy: "{{.Values.tmcsim.pullPolicy}}"
