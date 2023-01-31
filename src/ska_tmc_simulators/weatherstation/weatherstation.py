@@ -13,17 +13,20 @@ class WeatherStation(Device):
 
     def init_device(self):
         """Device init class"""
+        Device.init_device(self)
         logging.info("device initialized")
-        self.windspeed = 0.0
-        self.temperature = 0.0
-        self.ionization = 0.0
-        self.humidity = 0.0
+        self.__windspeed = 0.0
+        self.__temperature = 0.0
+        self.__ionization = 0.0
+        self.__humidity = 0.0
 
     windspeed = attribute(
         label="WindSpeed",
         dtype=float,
         access=AttrWriteType.READ_WRITE,
         unit="m/s",
+        fget="get_windspeed",
+        fset="set_windspeed",
         format="8.4f",
     )
 
@@ -32,6 +35,8 @@ class WeatherStation(Device):
         dtype=float,
         display_level=DispLevel.OPERATOR,
         access=AttrWriteType.READ_WRITE,
+        fget="get_temperature",
+        fset="set_temperature",
         unit="C",
         format="8.4f",
     )
@@ -41,6 +46,8 @@ class WeatherStation(Device):
         dtype=float,
         access=AttrWriteType.READ_WRITE,
         unit="mV",
+        fget="get_ionization",
+        fset="set_ionization",
     )
 
     humidity = attribute(
@@ -48,39 +55,41 @@ class WeatherStation(Device):
         dtype=float,
         access=AttrWriteType.READ_WRITE,
         unit="%",
+        fget="get_humidity",
+        fset="set_humidity",
     )
 
-    def read_windspeed(self):
+    def get_windspeed(self):
         """read windspeed"""
-        return self.windspeed
+        return self.__windspeed
 
-    def write_windspeed(self, value):
+    def set_windspeed(self, value):
         """write windspeed"""
-        self.windspeed = value
+        self.__windspeed = value
 
-    def read_temperature(self):
+    def get_temperature(self):
         """read temperature"""
-        return self.temperature
+        return self.__temperature
 
-    def write_temperature(self, value):
+    def set_temperature(self, value):
         """write temperature"""
-        self.temperature = value
+        self.__temperature = value
 
-    def read_ionization(self):
+    def get_ionization(self):
         """read ionization"""
-        return self.ionization
+        return self.__ionization
 
-    def write_ionization(self, value):
+    def set_ionization(self, value):
         """write ionization"""
-        self.ionization = value
+        self.__ionization = value
 
-    def read_humidity(self):
+    def get_humidity(self):
         """read humidity"""
-        return self.humidity
+        return self.__humidity
 
-    def write_humidity(self, value):
+    def set_humidity(self, value):
         """write humidity"""
-        self.humidity = value
+        self.__humidity = value
 
     @command
     def TurnOn(self):

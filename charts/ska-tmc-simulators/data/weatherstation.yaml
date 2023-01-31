@@ -1,20 +1,24 @@
 name: "weatherstation-{{.Release.Name}}"
-function: observation-execution
+function: weatherstation-monitoring
 domain: general-monitoring
-instances: ["test"]
-entrypoints:
-  - path: "/app/src/ska_tmc_simulators/weatherstation/weatherstation.py"
-    name: "weatherstation.WeatherStation"
-labels:
-  app: "simulator"
+instances: ["01"]
+command: "python3 /app/src/ska_tmc_simulators/weatherstation/weatherstation.py"
 server:
-  name: "WeatherStation"
+  name: "weatherstation"
   instances:
-    - name: "test"
+    - name: "01"
       classes:
-      - name: "WeatherStation"
-        devices:
-        - name: "test/WeatherStation/1"
+        - name: "WeatherStation"
+          devices:
+            - name: "test/WeatherStation/1"
+              properties:
+                - name: "LoggingTargetsDefault"
+                  values:
+                    - "tango::logger"
+                - name: "LoggingLevelDefault"
+                  values:
+                    - "5"
+                     
 depends_on:
   - device: sys/database/2
 image:
