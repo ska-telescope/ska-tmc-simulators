@@ -1,0 +1,55 @@
+name: "powersupplysimulator-{{.Release.Name}}"
+function: powersupply-monitoring
+domain: general-monitoring
+instances: ["01"]
+command: "python3 /app/src/ska_tmc_simulators/powerSupplySimulator/powerSupply.py"
+server:
+  name: "powerSupply"
+  instances:
+    - name: "01"
+      classes:
+        - name: "PowerSupply"
+          devices:
+            - name: "ps/power_supply/1"
+              properties:
+                - name: "LoggingTargetsDefault"
+                  values:
+                    - "tango::logger"
+                - name: "LoggingLevelDefault"
+                  values:
+                    - "5"
+                - name: "polled_attr"
+                  values:
+                    - "voltage"
+                    - "1000"
+                    - "current"
+                    - "1000"
+                    - "temperature"
+                    - "1000"                  
+              attribute_properties:
+                - attribute: "voltage"
+                  properties:
+                    - name: "set_voltage"
+                      values:
+                        - "0"
+                        - "100"
+                - attribute: "current"
+                  properties:
+                    - name: "set_current"
+                      values:
+                        - "0"
+                        - "100"
+                - attribute: "temperature"
+                  properties:
+                    - name: "set_temperature"
+                      values:
+                        - "10"
+                        - "100"
+                      
+depends_on:
+  - device: sys/database/2
+image:
+  registry: "{{.Values.tmcsim.registry}}"
+  image: "{{.Values.tmcsim.image}}"
+  tag: "{{.Values.tmcsim.tag}}"
+  pullPolicy: "{{.Values.tmcsim.pullPolicy}}"

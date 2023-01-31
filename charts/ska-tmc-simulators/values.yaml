@@ -61,7 +61,15 @@ deviceServers:
   cspmastersimulator:
     enabled: true
     instances: ["01"]
-    file: "data/cspmastersimulator.yaml"
+    file: "data/cspmastersimulator.yaml"  
+  powersupplysimulator:
+    enabled: true
+    instances: ["01"]
+    file: "data/powersupplysimulator.yaml"
+  weatherstation:
+    enabled: true
+    instances: ["01"]
+    file: "data/weatherstation.yaml"
   sdpmastersimulator:
     enabled: false
     instances: ["01"]

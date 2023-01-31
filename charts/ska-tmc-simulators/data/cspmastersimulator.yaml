@@ -8,7 +8,7 @@ server:
   instances:
     - name: "01"
       classes:
-        - name: "CspMasterSimulator"
+        - name: "CspMasterDevice"
           devices:
             - name: "mid-csp/control/0"
               properties:
