@@ -2,21 +2,28 @@
 # -*- coding: utf-8 -*-
 
 """Demo Weather Station tango device server"""
+import logging
 
-import time
-
-from tango import AttrQuality, AttrWriteType, DevState, DispLevel
-from tango.server import Device, attribute, command, device_property, pipe
+from tango import AttrWriteType, DevState, DispLevel
+from tango.server import Device, attribute, command, run
 
 
 class WeatherStation(Device):
+    """This is weather station class"""
+
+    def init_device(self):
+        """Device init class"""
+        logging.info("device initialized")
+        self.windspeed = 0.0
+        self.temperature = 0.0
+        self.ionization = 0.0
+        self.humidity = 0.0
 
     windspeed = attribute(
         label="WindSpeed",
         dtype=float,
-        display_level=DispLevel.OPERATOR,
         access=AttrWriteType.READ_WRITE,
-        unit="km/hr",
+        unit="m/s",
         format="8.4f",
     )
 
@@ -25,84 +32,74 @@ class WeatherStation(Device):
         dtype=float,
         display_level=DispLevel.OPERATOR,
         access=AttrWriteType.READ_WRITE,
-        unit="K",
+        unit="C",
         format="8.4f",
-        min_value=265,
-        max_value=350,
-        min_alarm=273,
-        max_alarm=305,
-        min_warning=260,
-        max_warning=310,
-        fget="get_temp",
-        fset="set_temp",
     )
 
     ionization = attribute(
         label="Ionization",
-        dtype=((int,),),
+        dtype=float,
+        access=AttrWriteType.READ_WRITE,
+        unit="mV",
     )
 
     humidity = attribute(
         label="Humidity",
-        dtype=((int,),),
+        dtype=float,
+        access=AttrWriteType.READ_WRITE,
+        unit="%",
     )
 
-    info = pipe(label="Info")
+    def read_windspeed(self):
+        """read windspeed"""
+        return self.windspeed
 
-    host = device_property(dtype=str)
-    port = device_property(dtype=int, default_value=9788)
+    def write_windspeed(self, value):
+        """write windspeed"""
+        self.windspeed = value
 
-    def always_executed_hook(self):
-        t = "Windspeed=%s Temperature=%s" % (self.windspeed, self.temperature)
-        print(t)
-        self.set_status(t)
+    def read_temperature(self):
+        """read temperature"""
+        return self.temperature
 
-    def init_device(self):
-        Device.init_device(self)
-        self.__windspeed = 0.0
-        self.set_state(DevState.STANDBY)
-        self.set_change_event("windspeed", True, False)
+    def write_temperature(self, value):
+        """write temperature"""
+        self.temperature = value
 
-    def write_windspeed(self):
-        self.info_stream("read_windspeed(%s, %d)", self.host, self.port)
-        return 9.99, time.time(), AttrQuality.ATTR_WARNING
+    def read_ionization(self):
+        """read ionization"""
+        return self.ionization
 
-    def get_windspeed(self):
-        self.info_stream("read windspeed %s", self.windspeed)
-        return self.__windspeed
+    def write_ionization(self, value):
+        """write ionization"""
+        self.ionization = value
 
-    def set_windspeed(self, windspeed):
-        # should set the power supply current
-        self.__windspeed = windspeed
-        self.push_change_event("current", windspeed)
+    def read_humidity(self):
+        """read humidity"""
+        return self.humidity
 
-    def read_info(self):
-        return "Information", dict(
-            manufacturer="Tango", model="PS2000", version_number=123
-        )
-
-    # @DebugIt()
-    # def read_noise(self):
-    #     return numpy.random.random_integers(1000, size=(100, 100))
+    def write_humidity(self, value):
+        """write humidity"""
+        self.humidity = value
 
     @command
     def TurnOn(self):
+        """Turn on actual power supply"""
         # turn on the actual power supply here
         # logging.info("Turning ON Power Supply")
         self.set_state(DevState.ON)
 
     @command
     def TurnOff(self):
+        """Turn off actual power supply"""
         # turn off the actual power supply here
         self.set_state(DevState.OFF)
 
-    # @command(dtype_in=float, doc_in="Ramp target current",
-    #          dtype_out=bool, doc_out="True if ramping went well, "
-    #          "False otherwise")
-    # def Ramp(self, target_current):
-    #     # should do the ramping
-    #     return True
+
+def main(args=None, **kwargs):
+    """Main function"""
+    return run((WeatherStation,), args=args, **kwargs)
 
 
 if __name__ == "__main__":
-    WeatherStation.run_server()
+    main()
