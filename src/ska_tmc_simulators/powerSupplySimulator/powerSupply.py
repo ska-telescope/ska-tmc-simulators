@@ -10,6 +10,8 @@ from tango.server import Device, attribute, command, device_property, pipe, run
 
 class PowerSupply(Device):
 
+    """This is a Power Supply Device class."""
+
     temperature = attribute(
         label="temperature",
         dtype=float,
@@ -87,27 +89,31 @@ class PowerSupply(Device):
         self.set_state(DevState.STANDBY)
 
     def get_current(self):
+        """For getting the Power Supply current value"""
         return float(self.__current)
 
     def set_current(self, current):
-        # should set the power supply current
+        """For setting the Power Supply current value"""
         self.__current = current
 
     def get_voltage(self):
+        """For getting the Power Supply voltage value"""
         return self.__voltage
 
     def set_voltage(self, voltage):
-        # should set the power supply current
+        """For setting the Power Supply voltage value"""
         self.__voltage = voltage
 
     def get_temperature(self):
+        """For getting the Power Supply temperature value"""
         return self.__temperature
 
     def set_temperature(self, temperature):
-        # should set the power supply current
+        """For setting the Power Supply temperature value"""
         self.__temperature = temperature
 
     def read_info(self):
+        """Info about Power Supply Device"""
         return "Information", dict(
             manufacturer="SKA-TMC-HIMALAYA",
             model="HIM-1000",
@@ -116,16 +122,17 @@ class PowerSupply(Device):
 
     @DebugIt()
     def read_noise(self):
+        """Random function"""
         return numpy.random.random_integers(1000, size=(100, 100))
 
     @command
     def TurnOn(self):
-        # turn on the actual power supply here
+        """To Turn On the Power Supply"""
         self.set_state(DevState.ON)
 
     @command
     def TurnOff(self):
-        # turn off the actual power supply here
+        """To Turn Off the Power Supply"""
         self.set_state(DevState.OFF)
 
     @command(
@@ -135,7 +142,7 @@ class PowerSupply(Device):
         doc_out="Returns the Current set ",
     )
     def Ramp_current(self, target_current):
-        # set power supply current
+        """Ramp target current"""
         self.__current = target_current
         return self.__current
 
@@ -146,7 +153,7 @@ class PowerSupply(Device):
         doc_out="Returns the voltage set. ",
     )
     def Ramp_voltage(self, target_voltage):
-        # set power supply voltage
+        """Ramp target voltage"""
         self.__voltage = target_voltage
         return self.__voltage
 
@@ -157,7 +164,7 @@ class PowerSupply(Device):
         doc_out="Returns the temperature set. ",
     )
     def Ramp_temperature(self, target_temperature):
-        # set power supply temperature
+        """Ramp target temperature"""
         self.__temperature = target_temperature
         return self.__temperature
 
