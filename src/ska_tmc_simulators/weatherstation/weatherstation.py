@@ -7,6 +7,8 @@ import logging
 from tango import AttrWriteType, DevState, DispLevel
 from tango.server import Device, attribute, command, run
 
+logger = logging.getLogger(__name__)
+
 
 class WeatherStation(Device):
     """This is weather station class"""
@@ -14,11 +16,11 @@ class WeatherStation(Device):
     def init_device(self):
         """Device init class"""
         Device.init_device(self)
-        logging.info("device initialized")
         self.__windspeed = 0.0
         self.__temperature = 0.0
         self.__ionization = 0.0
         self.__humidity = 0.0
+        logger.info("Device initialized")
 
     windspeed = attribute(
         label="WindSpeed",
@@ -92,16 +94,15 @@ class WeatherStation(Device):
         self.__humidity = value
 
     @command
-    def TurnOn(self):
-        """Turn on actual power supply"""
-        # turn on the actual power supply here
-        # logging.info("Turning ON Power Supply")
+    def On(self):
+        """Turn on Weather station"""
+        logger.info("Turning ON Weather Station")
         self.set_state(DevState.ON)
 
     @command
-    def TurnOff(self):
-        """Turn off actual power supply"""
-        # turn off the actual power supply here
+    def Off(self):
+        """Turn off Weather Station"""
+        logger.info("Turning Off Weather Station")
         self.set_state(DevState.OFF)
 
 
