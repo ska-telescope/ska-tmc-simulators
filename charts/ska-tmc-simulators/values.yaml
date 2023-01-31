@@ -66,10 +66,6 @@ deviceServers:
     enabled: true
     instances: ["01"]
     file: "data/powersupplysimulator.yaml"
-  weatherstation:
-    enabled: true
-    instances: ["01"]
-    file: "data/weatherstation.yaml"
   sdpmastersimulator:
     enabled: false
     instances: ["01"]

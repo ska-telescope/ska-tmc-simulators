@@ -42,8 +42,6 @@ ska-tango-base:
 # tmc-simulator
 ska-tmc-simulators:
   deviceServers:
-    weatherstation:
-      enabled: true
     powersupplysimulator:
       enabled: true
 
