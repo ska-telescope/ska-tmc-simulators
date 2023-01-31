@@ -3,11 +3,8 @@
 
 """Demo power supply tango device simulator"""
 
-import time
-
 import numpy
-import tango
-from tango import AttrQuality, AttrWriteType, DebugIt, DevState, DispLevel
+from tango import AttrWriteType, DebugIt, DevState, DispLevel
 from tango.server import Device, attribute, command, device_property, pipe, run
 
 
@@ -112,7 +109,9 @@ class PowerSupply(Device):
 
     def read_info(self):
         return "Information", dict(
-            manufacturer="SKA-TMC-HIMALAYA", model="HIM-1000", version_number=123
+            manufacturer="SKA-TMC-HIMALAYA",
+            model="HIM-1000",
+            version_number=123,
         )
 
     @DebugIt()
@@ -178,4 +177,3 @@ def main(args=None, **kwargs):
 
 if __name__ == "__main__":
     main()
-
