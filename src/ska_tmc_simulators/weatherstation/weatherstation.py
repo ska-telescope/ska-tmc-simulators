@@ -3,17 +3,17 @@
 
 """Demo Weather Station tango device server"""
 import logging
+
 from ska_ser_logging import configure_logging
 from tango import AttrWriteType, DevState, DispLevel
 from tango.server import Device, attribute, command, run
 
-
 configure_logging()
 logger = logging.getLogger("ska.WeatherStation")
+
+
 class WeatherStation(Device):
     """This is weather station class"""
-
-
 
     def init_device(self):
         """Device init class"""
