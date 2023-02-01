@@ -75,6 +75,6 @@ deviceServers:
     instances: ["01", "02", "03"]
     file: "data/sdpsubarraysimulator.yaml"
   weatherstation:
-    enabled: true
+    enabled: false
     instances: ["01"]
     file: "data/weatherstation.yaml"
