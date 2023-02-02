@@ -1,0 +1,28 @@
+name: "weatherstation-{{.Release.Name}}"
+function: weatherstation-monitoring
+domain: general-monitoring
+instances: ["01"]
+command: "python3 /app/src/ska_tmc_simulators/weatherstation/weatherstation.py"
+server:
+  name: "weatherstation"
+  instances:
+    - name: "01"
+      classes:
+        - name: "WeatherStation"
+          devices:
+            - name: "test/WeatherStation/1"
+              properties:
+                - name: "LoggingTargetsDefault"
+                  values:
+                    - "tango::logger"
+                - name: "LoggingLevelDefault"
+                  values:
+                    - "5"
+                     
+depends_on:
+  - device: sys/database/2
+image:
+  registry: "{{.Values.tmcsim.registry}}"
+  image: "{{.Values.tmcsim.image}}"
+  tag: "{{.Values.tmcsim.tag}}"
+  pullPolicy: "{{.Values.tmcsim.pullPolicy}}"

@@ -56,3 +56,6 @@ ska-tmc-simulators:
 
     sdpsubarraysimulator:
       enabled: false
+    
+    weatherstation:
+      enabled: true
