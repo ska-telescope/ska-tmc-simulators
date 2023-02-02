@@ -3,9 +3,14 @@
 
 """Demo power supply tango device simulator"""
 
-import numpy
-from tango import AttrWriteType, DebugIt, DevState, DispLevel
-from tango.server import Device, attribute, command, device_property, pipe, run
+import logging
+
+from ska_ser_logging import configure_logging
+from tango import AttrWriteType, DevState, DispLevel
+from tango.server import Device, attribute, command, device_property, run
+
+configure_logging()
+logger = logging.getLogger("ska.PowerSupply")
 
 
 class PowerSupply(Device):
@@ -19,12 +24,12 @@ class PowerSupply(Device):
         access=AttrWriteType.READ_WRITE,
         unit="C",
         format="8.4f",
-        min_value=20.0,
+        min_value=-10.0,
         max_value=50.0,
-        min_alarm=10.0,
-        max_alarm=50.0,
-        min_warning=10.0,
-        max_warning=50.5,
+        min_alarm=0.0,
+        max_alarm=51.0,
+        min_warning=0.0,
+        max_warning=45.5,
         polling_period=1000,
         fget="get_temperature",
         fset="set_temperature",
@@ -39,11 +44,11 @@ class PowerSupply(Device):
         unit="V",
         format="8.4f",
         min_value=5.0,
-        max_value=8.5,
+        max_value=12.0,
         min_alarm=5.0,
-        max_alarm=8.5,
+        max_alarm=13.0,
         min_warning=5.0,
-        max_warning=8.5,
+        max_warning=12.5,
         polling_period=1000,
         fget="get_voltage",
         fset="set_voltage",
@@ -59,9 +64,9 @@ class PowerSupply(Device):
         format="8.4f",
         min_value=0.0,
         max_value=8.5,
-        min_alarm=0.1,
-        max_alarm=8.4,
-        min_warning=0.5,
+        min_alarm=3.0,
+        max_alarm=9.0,
+        min_warning=3.5,
         max_warning=8.0,
         polling_period=1000,
         fget="get_current",
@@ -69,70 +74,51 @@ class PowerSupply(Device):
         doc="the power supply current",
     )
 
-    noise = attribute(
-        label="Noise", dtype=((int,),), max_dim_x=1024, max_dim_y=1024
-    )
-
-    info = pipe(label="Info")
-
     host = device_property(str, default_value="192.168.49.2")
     port = device_property(int, default_value=30005)
 
     def init_device(self):
         Device.init_device(self)
-        self.set_change_event("voltage", True, False)
-        self.set_change_event("current", True, False)
-        self.set_change_event("temperature", True, False)
         self.__current = 0.0
         self.__voltage = 0.0
         self.__temperature = 10.0
         self.set_state(DevState.STANDBY)
+        logger.info("Power Supply Device Initialized")
 
     def get_current(self):
-        """For getting the Power Supply current value"""
+        """Read current of Power Supply Device."""
         return float(self.__current)
 
     def set_current(self, current):
-        """For setting the Power Supply current value"""
+        """Set current of Power Supply Device."""
         self.__current = current
 
     def get_voltage(self):
-        """For getting the Power Supply voltage value"""
+        """Read voltage of Power Supply Device."""
         return self.__voltage
 
     def set_voltage(self, voltage):
-        """For setting the Power Supply voltage value"""
+        """Set voltage of Power Supply Device."""
         self.__voltage = voltage
 
     def get_temperature(self):
-        """For getting the Power Supply temperature value"""
+        """Read temperature of Power Supply Device."""
         return self.__temperature
 
     def set_temperature(self, temperature):
-        """For setting the Power Supply temperature value"""
+        """Set temperature of Power Supply Device."""
         self.__temperature = temperature
-
-    def read_info(self):
-        """Info about Power Supply Device"""
-        return "Information", dict(
-            manufacturer="SKA-TMC-HIMALAYA",
-            model="HIM-1000",
-            version_number=123,
-        )
-
-    @DebugIt()
-    def read_noise(self):
-        """Random function"""
-        return numpy.random.random_integers(1000, size=(100, 100))
 
     @command
     def TurnOn(self):
-        """To Turn On the Power Supply"""
+        """Turn On Power Supply Device."""
+        logger.info("Turning ON Power Supply.")
         self.set_state(DevState.ON)
 
     @command
     def TurnOff(self):
-        """To Turn Off the Power Supply"""
+        """Turn Off Power Supply Device."""
+        logger.info("Turning OFF Weather Station")
         self.set_state(DevState.OFF)
 
     @command(
@@ -144,6 +130,7 @@ class PowerSupply(Device):
     def Ramp_current(self, target_current):
         """Ramp target current"""
         self.__current = target_current
+        logger.info(f"Power Supply Device Current: {self.__current}")
         return self.__current
 
     @command(
@@ -155,18 +142,8 @@ class PowerSupply(Device):
     def Ramp_voltage(self, target_voltage):
         """Ramp target voltage"""
         self.__voltage = target_voltage
+        logger.info(f"Power Supply Device Voltage: {self.__voltage}")
         return self.__voltage
-
-    @command(
-        dtype_in=float,
-        doc_in="Ramp target temperature",
-        dtype_out=float,
-        doc_out="Returns the temperature set. ",
-    )
-    def Ramp_temperature(self, target_temperature):
-        """Ramp target temperature"""
-        self.__temperature = target_temperature
-        return self.__temperature
 
 
 def main(args=None, **kwargs):

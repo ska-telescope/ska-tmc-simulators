@@ -23,7 +23,7 @@ global:
 tmcsim:
   registry: artefact.skao.int
   image: ska-tmc-simulators
-  tag: 0.0.6
+  tag: 0.0.7
   pullPolicy: IfNotPresent
 
 # subarray_count, this will be expanded (1 to N inclusive) and applied to instances of:
@@ -62,10 +62,6 @@ deviceServers:
     enabled: true
     instances: ["01"]
     file: "data/cspmastersimulator.yaml"  
-  powersupplysimulator:
-    enabled: true
-    instances: ["01"]
-    file: "data/powersupplysimulator.yaml"
   sdpmastersimulator:
     enabled: false
     instances: ["01"]
@@ -82,3 +78,7 @@ deviceServers:
     enabled: false
     instances: ["01"]
     file: "data/weatherstation.yaml"
+  powersupplysimulator:
+    enabled: true
+    instances: ["01"]
+    file: "data/powersupplysimulator.yaml"

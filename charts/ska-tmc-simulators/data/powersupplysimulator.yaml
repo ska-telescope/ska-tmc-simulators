@@ -25,27 +25,8 @@ server:
                     - "current"
                     - "1000"
                     - "temperature"
-                    - "1000"                  
-              attribute_properties:
-                - attribute: "voltage"
-                  properties:
-                    - name: "set_voltage"
-                      values:
-                        - "0"
-                        - "100"
-                - attribute: "current"
-                  properties:
-                    - name: "set_current"
-                      values:
-                        - "0"
-                        - "100"
-                - attribute: "temperature"
-                  properties:
-                    - name: "set_temperature"
-                      values:
-                        - "10"
-                        - "100"
-                      
+                    - "1000"
+                    
 depends_on:
   - device: sys/database/2
 image:
