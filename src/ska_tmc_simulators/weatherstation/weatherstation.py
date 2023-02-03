@@ -18,6 +18,10 @@ class WeatherStation(Device):
     def init_device(self):
         """Device init class"""
         Device.init_device(self)
+        self.set_change_event("windspeed", True, False)
+        self.set_change_event("temperature", True, False)
+        self.set_change_event("ionization", True, False)
+        self.set_change_event("humidity", True, False)
         self.__windspeed = 0.0
         self.__temperature = 0.0
         self.__ionization = 0.0
@@ -70,6 +74,7 @@ class WeatherStation(Device):
     def set_windspeed(self, value):
         """write windspeed"""
         self.__windspeed = value
+        self.push_change_event("windspeed", self.__windspeed)
 
     def get_temperature(self):
         """read temperature"""
@@ -78,6 +83,7 @@ class WeatherStation(Device):
     def set_temperature(self, value):
         """write temperature"""
         self.__temperature = value
+        self.push_change_event("temperature", self.__temperature)
 
     def get_ionization(self):
         """read ionization"""
@@ -86,6 +92,7 @@ class WeatherStation(Device):
     def set_ionization(self, value):
         """write ionization"""
         self.__ionization = value
+        self.push_change_event("ionization", self.__ionization)
 
     def get_humidity(self):
         """read humidity"""
@@ -94,6 +101,7 @@ class WeatherStation(Device):
     def set_humidity(self, value):
         """write humidity"""
         self.__humidity = value
+        self.push_change_event("humidity", self.__humidity)
 
     @command
     def On(self):

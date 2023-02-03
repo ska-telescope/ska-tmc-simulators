@@ -1,16 +1,16 @@
-name: "cspmastersimulator-{{.Release.Name}}"
-function: csp-monitoring
+name: "powersupplysimulator-{{.Release.Name}}"
+function: powersupply-monitoring
 domain: general-monitoring
 instances: ["01"]
-command: "python3 /app/src/ska_tmc_simulators/cspmastersimulator/csp_master.py"
+command: "python3 /app/src/ska_tmc_simulators/powerSupplySimulator/powerSupply.py"
 server:
-  name: "csp_master"
+  name: "powerSupply"
   instances:
     - name: "01"
       classes:
-        - name: "CspMasterDevice"
+        - name: "PowerSupply"
           devices:
-            - name: "mid-csp/control/0"
+            - name: "ps/power_supply/1"
               properties:
                 - name: "LoggingTargetsDefault"
                   values:
@@ -20,15 +20,13 @@ server:
                     - "5"
                 - name: "polled_attr"
                   values:
-                    - "healthstate"
+                    - "voltage"
                     - "1000"
-              attribute_properties:
-                - attribute: "healthState"
-                  properties:
-                    - name: "abs_change"
-                      values:
-                        - "-1"
-                        - "1"
+                    - "current"
+                    - "1000"
+                    - "temperature"
+                    - "1000"
+                    
 depends_on:
   - device: sys/database/2
 image:
