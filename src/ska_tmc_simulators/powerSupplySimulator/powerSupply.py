@@ -96,6 +96,7 @@ class PowerSupply(Device):
     def set_current(self, current):
         """Set current of Power Supply Device."""
         self.__current = current
+        self.push_change_event("current", True, False)
 
     def get_voltage(self):
         """Read voltage of Power Supply Device."""
@@ -104,6 +105,7 @@ class PowerSupply(Device):
     def set_voltage(self, voltage):
         """Set voltage of Power Supply Device."""
         self.__voltage = voltage
+        self.push_change_event("voltage", True, False)
 
     def get_temperature(self):
         """Read temperature of Power Supply Device."""
@@ -112,6 +114,7 @@ class PowerSupply(Device):
     def set_temperature(self, temperature):
         """Set temperature of Power Supply Device."""
         self.__temperature = temperature
+        self.push_change_event("temperature", True, False)
 
     @command
     def TurnOn(self):
