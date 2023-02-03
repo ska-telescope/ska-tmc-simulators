@@ -18,6 +18,10 @@ class WeatherStation(Device):
     def init_device(self):
         """Device init class"""
         Device.init_device(self)
+        self.set_change_event("windspeed", True, False)
+        self.set_change_event("temperature", True, False)
+        self.set_change_event("ionization", True, False)
+        self.set_change_event("humidity", True, False)
         self.__windspeed = 0.0
         self.__temperature = 0.0
         self.__ionization = 0.0

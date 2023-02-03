@@ -78,7 +78,11 @@ class PowerSupply(Device):
     port = device_property(int, default_value=30005)
 
     def init_device(self):
+        """Initialize power supply device."""
         Device.init_device(self)
+        self.set_change_event("current", True, False)
+        self.set_change_event("temperature", True, False)
+        self.set_change_event("voltage", True, False)
         self.__current = 0.0
         self.__voltage = 0.0
         self.__temperature = 10.0
