@@ -3,6 +3,8 @@ xauthority: "~/.Xauthority"
 
 enabled: true
 
+legacy_compatibility: true
+
 system: TMC-simulators
 telescope: SKA-mid
 subsystem: ska-tmc-simulators-mid
@@ -23,7 +25,7 @@ global:
 tmcsim:
   registry: artefact.skao.int
   image: ska-tmc-simulators
-  tag: 0.0.7
+  tag: 0.1.0
   pullPolicy: IfNotPresent
 
 # subarray_count, this will be expanded (1 to N inclusive) and applied to instances of:
