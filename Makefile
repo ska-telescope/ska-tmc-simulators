@@ -76,5 +76,4 @@ K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
 	--set ska-tango-base.xauthority=$(XAUTHORITY) \
 	--set ska-tango-base.jive.enabled=$(JIVE) \
 	--set tmcsim.telescope=$(TELESCOPE) \
-	$(CUSTOM_VALUES) \
-	--values gilab_values.yaml
+	$(CUSTOM_VALUES) 

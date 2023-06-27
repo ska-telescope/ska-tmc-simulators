@@ -68,7 +68,7 @@ include:
 
   # Deploy stage
   - project: 'ska-telescope/templates-repository'
-    file: 'gitlab-ci/includes/deploy.use-agent.gitlab-ci.yml'
+    file: 'gitlab-ci/includes/deploy.dev.gitlab-ci.yml'
 
   # Docs pages
   - project: 'ska-telescope/templates-repository'
