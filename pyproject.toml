@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ska_tmc_simulators"
-version = "0.1.0"
+version = "0.0.7"
 description = "This is a package that has simulators used by TMC for testing purposes. It provides simulators for CSP and SDP subsystems for ska telescope."
 authors = ["Team HIMALAYA" , "Team SAHYADRI"]
 license = "BSD-3-Clause"
