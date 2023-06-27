@@ -2,6 +2,7 @@ display: ":0"
 xauthority: "~/.Xauthority"
 
 enabled: true
+legacy_compatibility: true
 
 system: TMC-simulators
 telescope: SKA-mid
