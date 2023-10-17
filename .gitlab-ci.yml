@@ -66,6 +66,9 @@ include:
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/python-publish.gitlab-ci.yml'
 
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/tmdata.gitlab-ci.yml'
+
   # Deploy stage
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/deploy.dev.gitlab-ci.yml'
