@@ -64,6 +64,7 @@ K8S_TEST_IMAGE_TO_TEST=$(CAR_OCI_REGISTRY_HOST)/$(PROJECT):$(VERSION)
 -include .make/make.mk
 -include .make/help.mk
 -include PrivateRules.mak
+-include .make/tmdata.mk
 
 # flag this up for the oneshot /Dockerfile
 OCI_IMAGES=ska-tmc-simulators
