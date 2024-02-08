@@ -90,3 +90,14 @@ k8s-test:
   rules:
     - exists:
         - src/**/*
+
+tmdata-publish:
+  stage: publish
+  image: $SKA_K8S_TOOLS_DEPLOY_IMAGE
+  dependencies:
+    - tmdata-build
+  tags:
+    - k8srunner
+  script:
+    - make tmdata-publish
+

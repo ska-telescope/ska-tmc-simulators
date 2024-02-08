@@ -1,0 +1,12 @@
+db: <TANGO_DATABASEDS>.<KUBE_NAMESPACE>.svc.<CLUSTER_DOMAIN>:<TANGO_DATABASEDS_PORT>
+manager: <mid/low>-eda/cm/01
+archiver: <mid/low>-eda/es/01
+configuration:
+  - class: TangoTest
+    attributes:
+      short_scalar_ro:
+        archive_period: 5000
+        polling_period: 3000
+      double_image:
+        archive_period: 5000
+        polling_period: 3000
