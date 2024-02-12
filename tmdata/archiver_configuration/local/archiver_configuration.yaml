@@ -1,6 +1,6 @@
-db: tango-host-databaseds-test.ci-ska-tango-archiver-master-low.svc.cluster.local:10000
-manager: low-eda/cm/01
-archiver: low-eda/es/01
+db: tango-host-databaseds-test.ska-tango-archiver.svc.cluster.local:10000
+manager: mid-eda/cm/01
+archiver: mid-eda/es/01
 configuration:
   - class: TangoTest
     attributes:
