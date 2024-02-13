@@ -90,3 +90,8 @@ k8s-test:
   rules:
     - exists:
         - src/**/*
+
+tmdata-publish:
+  rules:
+    - exists:
+        - tmdata/**/*

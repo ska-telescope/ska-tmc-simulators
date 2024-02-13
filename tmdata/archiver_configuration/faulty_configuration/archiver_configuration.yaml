@@ -1,0 +1,13 @@
+db: tango-host-databaseds-test
+manager: mid-eda/cm
+archiver: mid-eda/es/01
+configuration:
+  - class: TangoTest
+    attributes:
+      short_scalar_ro:
+        archive_period: 5000
+        polling_period: 3000
+      double_image:
+        archive_period: 5000
+        polling_period: 3000
+

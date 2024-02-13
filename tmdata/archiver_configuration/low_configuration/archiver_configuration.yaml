@@ -1,6 +1,6 @@
-db: <TANGO_DATABASEDS>.<KUBE_NAMESPACE>.svc.<CLUSTER_DOMAIN>:<TANGO_DATABASEDS_PORT>
-manager: <mid/low>-eda/cm/01
-archiver: <mid/low>-eda/es/01
+db: tango-host-databaseds-test.ci-ska-tango-archiver-master-low.svc.cluster.local:10000
+manager: low-eda/cm/01
+archiver: low-eda/es/01
 configuration:
   - class: TangoTest
     attributes:

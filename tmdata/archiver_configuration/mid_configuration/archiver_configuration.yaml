@@ -1,0 +1,12 @@
+db: tango-host-databaseds-test.ci-ska-tango-archiver-master.svc.cluster.local:10000
+manager: mid-eda/cm/01
+archiver: mid-eda/es/01
+configuration:
+  - class: TangoTest
+    attributes:
+      short_scalar_ro:
+        archive_period: 5000
+        polling_period: 3000
+      double_image:
+        archive_period: 5000
+        polling_period: 3000
