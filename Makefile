@@ -54,6 +54,7 @@ ITANGO_DOCKER_IMAGE = $(CAR_OCI_REGISTRY_HOST)/ska-tango-images-tango-itango:9.3
 CI_REGISTRY ?= gitlab.com
 CUSTOM_VALUES = --set tmcsim.image.tag=$(VERSION)
 K8S_TEST_IMAGE_TO_TEST=$(CAR_OCI_REGISTRY_HOST)/$(PROJECT):$(VERSION)
+CLUSTER_DOMAIN ?= cluster.local
 
 -include .make/k8s.mk
 -include .make/python.mk
@@ -77,4 +78,6 @@ K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
 	--set ska-tango-base.xauthority=$(XAUTHORITY) \
 	--set ska-tango-base.jive.enabled=$(JIVE) \
 	--set tmcsim.telescope=$(TELESCOPE) \
+	--set global.cluster_domain=$(CLUSTER_DOMAIN)\
+	--set global.operator=true\
 	$(CUSTOM_VALUES) 
