@@ -66,7 +66,7 @@ CLUSTER_DOMAIN ?= cluster.local
 -include .make/help.mk
 -include PrivateRules.mak
 -include .make/tmdata.mk
-
+-include .make/base.mk 
 # flag this up for the oneshot /Dockerfile
 OCI_IMAGES=ska-tmc-simulators
 
