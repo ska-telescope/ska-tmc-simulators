@@ -1,4 +1,4 @@
-db: tango-host-databaseds-test.ska-tango-archiver.svc.cluster.local:10000
+db: tango-host-databaseds-test.ska-tango-archiver.svc.techops.internal.skao.int:10000
 manager: mid-eda/cm/01
 archiver: mid-eda/es/01
 configuration:
