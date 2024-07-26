@@ -1,5 +1,5 @@
 {
-"JSON_version": "V0.7",
+    "JSON_version": "V0.7",
     "Antenna": "SKA001",
     "Feed": "Band_2",
     "Attrs": {
