@@ -82,6 +82,9 @@ include:
     file: 'gitlab-ci/includes/k8s-test.gitlab-ci.yml'
 
 
+python-lint:
+  image: artefact.skao.int/ska-tango-images-pytango-builder:9.3.35
+
 k8s-test:
   # allow_failure: true
   stage: test
